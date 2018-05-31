@@ -25,3 +25,6 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+#Custom Added
+src/main/resources/application.properties
