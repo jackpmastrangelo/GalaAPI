@@ -1,4 +1,4 @@
-package Gala.galaapi;
+package gala.gala_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
