@@ -1,6 +1,7 @@
 package gala.gala_api.entity;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,10 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 
@@ -59,6 +64,22 @@ public class Ticket implements Serializable {
     private TicketStatus status;
 
     /**
+     * The date this Ticket entity was created at.
+     */
+    @NonNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private Date createdAt;
+
+    /**
+     * The date this Ticket entity was last modified.
+     */
+    @NonNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
+
+    /**
      * Get the unique Id of a Ticket.
      */
     public Long getId() {
@@ -87,6 +108,20 @@ public class Ticket implements Serializable {
     }
 
     /**
+     * Get the date this Ticket entity was created at.
+     */
+    public Date getCreatedAt() {
+        return this.createdAt;
+    }
+
+    /**
+     * Get the date this Ticket entity was last modified.
+     */
+    public Date getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    /**
      * Set the unique Id of a Ticket.
      */
     public void setId(Long id) {
@@ -112,5 +147,19 @@ public class Ticket implements Serializable {
      */
     public void setStatus(TicketStatus status) {
         this.status = status;
+    }
+
+    /**
+     * Set the date this Ticket entity was created at.
+     */
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    /**
+     * Set the date this Ticket entity was last modified.
+     */
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
