@@ -26,7 +26,11 @@ import org.springframework.lang.NonNull;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class Ticket implements Serializable {
     
-    /**
+    //This is highly reccommended for classes that implement Serializable.
+    //Keeping this class serializable because theres a chance its sent as JSON.
+    private static final long serialVersionUID = -8423698635559761439L;
+
+	/**
      * A Ticket's unique Id.
      */
     @Id
@@ -81,4 +85,31 @@ public class Ticket implements Serializable {
         return this.status;
     }
 
+    /**
+     * Set the unique Id of a Ticket.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Set the id for the event associated with this Ticket.
+     */
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
+
+    /**
+     * Set the email associated with this Ticket.
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Set this Ticket's status.
+     */
+    public void setStatus(TicketStatus status) {
+        this.status = status;
+    }
 }
