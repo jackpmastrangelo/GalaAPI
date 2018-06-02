@@ -1,4 +1,4 @@
-package gala.galaapi;
+package gala.gala_api;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

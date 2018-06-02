@@ -1,7 +1,7 @@
 package gala.gala_api.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -44,6 +44,7 @@ public class Event implements Serializable {
     //TODO Should this be @NotBlank?
     private Date eventTime;
 
+    //TODO Foreign Key, also accounts
     @NonNull
     private Long accountId;
 

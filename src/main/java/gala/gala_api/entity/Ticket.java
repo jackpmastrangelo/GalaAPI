@@ -1,7 +1,7 @@
 package gala.gala_api.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -47,6 +47,7 @@ public class Ticket implements Serializable {
     /**
      * The Id of the event associated with this Ticket.
      */
+    //TODO Foreign Key
     @NonNull
     private Long eventId;
 
