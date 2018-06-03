@@ -3,6 +3,7 @@ package gala.gala_api.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -47,9 +48,8 @@ public class Ticket implements Serializable {
     /**
      * The Id of the event associated with this Ticket.
      */
-    //TODO Foreign Key
-    @NonNull
-    private Long eventId;
+    @Column(name="event_id")
+    private Event event;
 
     /**
      * The email associated with the creation and sending of this Ticket.
@@ -88,10 +88,10 @@ public class Ticket implements Serializable {
     }
 
     /**
-     * Get the id for the event associated with this Ticket.
+     * Get the event associated with this Ticket.
      */
-    public Long getEventId() {
-        return this.eventId;
+    public Event getEvent() {
+        return this.event;
     }
 
     /**
@@ -132,8 +132,8 @@ public class Ticket implements Serializable {
     /**
      * Set the id for the event associated with this Ticket.
      */
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     /**
