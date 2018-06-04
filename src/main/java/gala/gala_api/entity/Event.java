@@ -44,9 +44,12 @@ public class Event implements Serializable {
     //TODO Should this be @NotBlank?
     private Date eventTime;
 
-    //TODO Foreign Key, also accounts
+    //TODO Foreign Key
     @NonNull
     private Long accountId;
+
+    @NonNull
+    private Integer capacity;
 
     /**
      * The date this Event entity was created at.
@@ -100,6 +103,13 @@ public class Event implements Serializable {
     }
 
     /**
+     * Get the capacity for this event.
+     */
+    public Integer getCapacity() {
+        return this.capacity;
+    }
+
+    /**
      * Set the place the event will be held at.
      */
     public void setPlace(String place) {
@@ -134,4 +144,10 @@ public class Event implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    /**
+     * Set the capacity for this Event.
+     */
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
 }
