@@ -61,8 +61,9 @@ public abstract class GenericCrudDao<Entity> implements CrudRepository<Entity, L
         return result != null;
 	}
 
+	@SuppressWarnings("unchecked")
     @Override
-	public Iterable<Entity> findAll() {
+	public List<Entity> findAll() {
 		return this.entityManager.createQuery("SELECT * FROM " + this.entityClass.getName() + ";").getResultList();
 	}
 
@@ -72,9 +73,7 @@ public abstract class GenericCrudDao<Entity> implements CrudRepository<Entity, L
         
         for (Long id : ids) {
             Optional<Entity> result = this.findById(id);
-            if (result.isPresent()) {
-                allEntitys.add(result.get());
-            }
+			result.ifPresent(allEntitys::add);
         }
 
         return allEntitys;
@@ -88,9 +87,7 @@ public abstract class GenericCrudDao<Entity> implements CrudRepository<Entity, L
 	@Override
 	public void deleteById(Long id) {
         Optional<Entity> Entity = this.findById(id);
-        if (Entity.isPresent()) {
-            this.entityManager.remove(Entity.get());
-        }
+		Entity.ifPresent(entity -> this.entityManager.remove(entity));
 	}
 
 	@Override
