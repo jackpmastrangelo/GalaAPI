@@ -9,4 +9,6 @@ import gala.gala_api.entity.Event;
 @RequestMapping("/events")
 public class EventController {
 
+    
+
 }
