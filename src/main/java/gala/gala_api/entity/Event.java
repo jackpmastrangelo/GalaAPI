@@ -2,12 +2,14 @@ package gala.gala_api.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,6 +53,9 @@ public class Event implements Serializable {
     @NonNull
     private Integer capacity;
 
+    @OneToMany(mappedBy="event")
+    private List<Ticket> tickets;
+
     /**
      * The date this Event entity was created at.
      */
@@ -66,6 +71,10 @@ public class Event implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
+
+    public Long getId() {
+        return this.id;
+    }
 
     /**
      * Get the date this Event entity was created at.
@@ -107,6 +116,14 @@ public class Event implements Serializable {
      */
     public Integer getCapacity() {
         return this.capacity;
+    }
+
+    public List<Ticket> getTickets() {
+        return this.tickets;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**

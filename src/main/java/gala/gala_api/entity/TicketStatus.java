@@ -11,7 +11,7 @@ public enum TicketStatus {
     /**
      * Ticket is unable to be used but has not been validated (i.e. Event is in past)
      */
-    INACTIVE,
+    VOIDED,
     /**
      * Ticket has been validated at event and cannot be validated again.
      */
