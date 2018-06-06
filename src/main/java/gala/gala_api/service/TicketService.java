@@ -1,7 +1,5 @@
 package gala.gala_api.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -68,11 +66,12 @@ public class TicketService {
         } else {
             response.setSuccess(false);
             response.setMessage("Ticket with Id " + ticketId.toString() + " could not be found.");
+            return response;
         }
 
         if (ticket.getStatus() == TicketStatus.ACTIVE) {
             
         }
-
+        return null;
     }
 }

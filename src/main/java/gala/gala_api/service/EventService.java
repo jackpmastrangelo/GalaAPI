@@ -3,6 +3,7 @@ package gala.gala_api.service;
 import gala.gala_api.dao.EventCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -13,7 +14,8 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 public class EventService {
 
-  private EventCrudDao eventCrudDao = new EventCrudDao();
+  @Autowired
+  private EventCrudDao eventCrudDao;
 
   public void createEvent(
       Account account,
@@ -33,10 +35,15 @@ public class EventService {
   }
 
   public List<Event> getUserEvents(long userId) {
-    List<Event> allEvents = eventCrudDao.findAll();
+    Iterable<Event> allEvents = eventCrudDao.findAll();
 
+    //Commenting out for now because Iterables do not suppoer stream. Will have to be changed somehow.
+    /**
     return allEvents.stream().filter(event -> event.getAccount().getId() == userId)
         .collect(toList());
+     */
+
+    return null;
   }
 
   public Event getEvent(long eventId) {
