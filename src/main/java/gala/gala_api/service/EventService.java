@@ -18,11 +18,11 @@ public class EventService {
   private EventCrudDao eventCrudDao;
 
   public void createEvent(
-      Account account,
-      String name,
-      String place,
-      Date eventTime,
-      int capacity
+    Account account,
+    String name,
+    String place,
+    Date eventTime,
+    int capacity
   ) {
     Event created = new Event();
     created.setAccount(account);

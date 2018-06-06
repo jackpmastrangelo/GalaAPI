@@ -4,20 +4,20 @@ import gala.gala_api.entity.Ticket;
 
 public class CreateTicketResponse {
 
-    /**
-     * The status of the createTicket call, true if it was succesful false if it was unsuccessful.
-     */
-    private boolean success;
+  /**
+   * The status of the createTicket call, true if it was succesful false if it was unsuccessful.
+   */
+  private boolean success;
 
-    /**
-     * A message specifying more information, to be shown to the user if the ticket creation was a failure.
-     */
-    private String message;
+  /**
+   * A message specifying more information, to be shown to the user if the ticket creation was a failure.
+   */
+  private String message;
 
-    /**
-     * The ticket that was created, null if there was a failure.
-     */
-    private Ticket ticket;
+  /**
+   * The ticket that was created, null if there was a failure.
+   */
+  private Ticket ticket;
 
 	/**
 	 * @return the success

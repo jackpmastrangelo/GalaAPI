@@ -49,10 +49,6 @@ public class Event implements Serializable {
   @NotNull
   private Integer capacity;
 
-  //TODO Make decision on handling mapping
-  @OneToMany(mappedBy="event")
-  private List<Ticket> tickets;
-
   /**
    * The date this Event entity was created at.
    */
@@ -107,10 +103,6 @@ public class Event implements Serializable {
     return this.capacity;
   }
 
-  public List<Ticket> getTickets() {
-    return this.tickets;
-  }
-
   public void setId(Long id) {
     this.id = id;
   }
@@ -156,10 +148,6 @@ public class Event implements Serializable {
 
   public void setAccount(Account account) {
     this.account = account;
-  }
-
-  public void setTickets(List<Ticket> tickets) {
-    this.tickets = tickets;
   }
 
   public String getName() {

@@ -32,7 +32,7 @@ public class ApplicationController  {
   private AccountCrudDao accountCrudDao;
 
   @GetMapping("/")
-  public Event index() {
+  public Integer index() {
     Account newAccount = new Account();
     newAccount.setFirstName("Jack");
     newAccount.setLastName("Mastrangelo");
@@ -54,18 +54,13 @@ public class ApplicationController  {
     Ticket newTicket2 = new Ticket();
     newTicket2.setEmail("mail@me.bitch!");
     newTicket2.setStatus(TicketStatus.VOIDED);
-    newTicket2.setEvent(newEvent);
-
-    newEvent.setTickets(Arrays.asList(newTicket1, newTicket2));
+    newTicket2.setEvent(newEvent);;
 
     this.accountCrudDao.save(newAccount);
 
     this.eventCrudDao.save(newEvent);
 
-    this.ticketCrudDao.save(newTicket1);
-    this.ticketCrudDao.save(newTicket2);
-
-    return eventCrudDao.findById(1L).get();
+    return this.ticketCrudDao.findByEvent(newEvent).size();
   }
 
 }
