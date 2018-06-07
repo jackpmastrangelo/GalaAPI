@@ -11,6 +11,7 @@ import gala.gala_api.dao.TicketCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
+import gala.gala_api.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,9 @@ public class ApplicationController  {
 
   @Autowired
   private AccountCrudDao accountCrudDao;
+
+  @Autowired
+  private EmailService emailService;
 
   @GetMapping("/")
   public Integer index() {
@@ -61,6 +65,12 @@ public class ApplicationController  {
     this.eventCrudDao.save(newEvent);
 
     return this.ticketCrudDao.findByEvent(newEvent).size();
+  }
+
+  @GetMapping("/email")
+  public String emailTest() {
+    emailService.sampleEmail();
+    return "Email maybe sent idk fam";
   }
 
 }
