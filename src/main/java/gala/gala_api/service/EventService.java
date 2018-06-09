@@ -4,6 +4,7 @@ import gala.gala_api.dao.EventCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Transactional
+@Service
 public class EventService {
 
   @Autowired

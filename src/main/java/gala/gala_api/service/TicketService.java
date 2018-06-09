@@ -14,9 +14,10 @@ import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
 import gala.gala_api.responses.CreateTicketResponse;
 import gala.gala_api.responses.ValidateTicketResponse;
+import org.springframework.stereotype.Service;
 
 @Transactional
-@Component
+@Service
 public class TicketService {
 
   @Autowired

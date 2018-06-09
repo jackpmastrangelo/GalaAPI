@@ -1,13 +1,10 @@
 package gala.gala_api.controller;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-
 import javax.transaction.Transactional;
 
 import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.dao.TicketCrudDao;
+import gala.gala_api.email.SendTicketEmail;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gala.gala_api.dao.EventCrudDao;
 import gala.gala_api.entity.Event;
+
+import java.util.Date;
 
 @RestController
 @Transactional
@@ -69,7 +68,7 @@ public class ApplicationController  {
 
   @GetMapping("/email")
   public String emailTest() {
-    emailService.sampleEmail();
+    emailService.sendEmail("jmastrangelo111@gmail.com", new SendTicketEmail("Loft Gala!"));
     return "Email maybe sent idk fam";
   }
 
