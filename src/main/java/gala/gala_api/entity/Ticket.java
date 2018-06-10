@@ -3,24 +3,14 @@ package gala.gala_api.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -42,8 +32,10 @@ public class Ticket implements Serializable {
    * A Ticket's unique Id.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
+  @Column(unique = true)
+  private String id;
 
   /**
    * The {@link Event} associated with this Ticket.
@@ -82,7 +74,7 @@ public class Ticket implements Serializable {
   /**
    * Get the unique Id of a Ticket.
    */
-  public Long getId() {
+  public String getId() {
       return this.id;
   }
 
@@ -124,7 +116,7 @@ public class Ticket implements Serializable {
   /**
    * Set the unique Id of a Ticket.
    */
-  public void setId(Long id) {
+  public void setId(String id) {
       this.id = id;
   }
 

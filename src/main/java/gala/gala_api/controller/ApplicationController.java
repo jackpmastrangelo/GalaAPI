@@ -63,6 +63,9 @@ public class ApplicationController  {
 
     this.eventCrudDao.save(newEvent);
 
+    this.ticketCrudDao.save(newTicket1);
+    this.ticketCrudDao.save(newTicket2);
+
     return this.ticketCrudDao.findByEvent(newEvent).size();
   }
 
