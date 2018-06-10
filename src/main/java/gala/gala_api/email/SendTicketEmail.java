@@ -11,14 +11,16 @@ public class SendTicketEmail extends AbstractEmail {
 
   private String eventName;
   private AWSS3Service awss3Service;
+  private String qrCodeNumber;
 
   /**
    * Constructs a new SendTicketEmail.
    * @param eventName The name of the event that the ticket was generated for.
    */
-  public SendTicketEmail(String eventName) {
+  public SendTicketEmail(String eventName, String qrCodeNumber) {
     this.eventName = eventName;
     this.awss3Service = new AWSS3Service();
+    this.qrCodeNumber = qrCodeNumber;
   }
 
   /**
@@ -42,6 +44,7 @@ public class SendTicketEmail extends AbstractEmail {
     }
 
     emailBody = emailBody.replace("-EVENT_NAME-", eventName);
+    emailBody = emailBody.replace("-QR_CODE_NUMBER-", qrCodeNumber);
 
     return this.createEmailHelper("ticketing@galatix.io", subject, emailBody, textBody);
   }

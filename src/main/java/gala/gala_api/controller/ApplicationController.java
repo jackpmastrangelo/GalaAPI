@@ -9,6 +9,7 @@ import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
 import gala.gala_api.service.EmailService;
+import gala.gala_api.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +35,11 @@ public class ApplicationController  {
   @Autowired
   private EmailService emailService;
 
+  @Autowired
+  private TicketService ticketService;
+
   @GetMapping("/")
-  public Integer index() {
+  public String index() {
     Account newAccount = new Account();
     newAccount.setFirstName("Jack");
     newAccount.setLastName("Mastrangelo");
@@ -66,13 +70,37 @@ public class ApplicationController  {
     this.ticketCrudDao.save(newTicket1);
     this.ticketCrudDao.save(newTicket2);
 
-    return this.ticketCrudDao.findByEvent(newEvent).size();
+    return newTicket1.getId();
   }
 
   @GetMapping("/email")
   public String emailTest() {
-    emailService.sendEmail("jmastrangelo111@gmail.com", new SendTicketEmail("Loft Gala!"));
+    emailService.sendEmail("jmastrangelo111@gmail.com", new SendTicketEmail("Loft Gala!", "Null"));
     return "Email maybe sent idk fam";
+  }
+
+  @GetMapping("/test")
+  public String ticketTest() {
+    Account newAccount = new Account();
+    newAccount.setFirstName("Jack");
+    newAccount.setLastName("Mastrangelo");
+    newAccount.setEmail("bite@my.shinymetalass");
+    newAccount.setPassword("shhhhhh");
+
+    accountCrudDao.save(newAccount);
+
+    Event newEvent = new Event();
+    newEvent.setName("Nothing");
+    newEvent.setPlace("NoWhere");
+    newEvent.setEventTime(new Date());
+    newEvent.setCapacity(500);
+    newEvent.setAccount(newAccount);
+
+    eventCrudDao.save(newEvent);
+
+    ticketService.createTicket(newEvent.getId(), "jmastrangelo111@gmail.com");
+
+    return "Test Email Sent";
   }
 
 }

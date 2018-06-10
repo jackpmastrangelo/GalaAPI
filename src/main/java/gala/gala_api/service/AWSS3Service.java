@@ -1,11 +1,16 @@
 package gala.gala_api.service;
 
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import javassist.bytecode.ByteArray;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -14,6 +19,8 @@ import java.io.InputStreamReader;
  */
 @Service
 public class AWSS3Service {
+
+  private AmazonS3 client = AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build();
 
   /**
    * Gets the given s3 file and returns its contents as a large string. Currently does not preserver newlines.
@@ -25,8 +32,7 @@ public class AWSS3Service {
    * @throws IOException If there is an issue reading the file.
    */
   public String getS3ObjectAsString(String bucket, String key) throws IOException {
-    S3Object emailTemplateObj = AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build()
-            .getObject(bucket, key);
+    S3Object emailTemplateObj = client.getObject(bucket, key);
 
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));
 
@@ -41,4 +47,9 @@ public class AWSS3Service {
     return result.toString();
   }
 
+  public void putS3ObjectFromByteArray(byte[] s3Obj, String bucket, String key) {
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(s3Obj);
+    PutObjectRequest request = new PutObjectRequest(bucket, key, inputStream, new ObjectMetadata());
+    client.putObject(request);
+  }
 }

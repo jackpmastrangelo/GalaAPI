@@ -31,6 +31,8 @@ dependencies {
     compile('com.amazonaws:aws-java-sdk-ses:1.11.342')
     compile('org.springframework.cloud:spring-cloud-aws-context:1.2.2.RELEASE')
     compile('com.amazonaws:aws-java-sdk-s3:1.11.342')
+    compile('com.google.zxing:core:3.3.3')
+    compile('com.google.zxing:javase:3.3.3')
 
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('org.postgresql:postgresql')
