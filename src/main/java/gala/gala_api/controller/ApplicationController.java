@@ -4,11 +4,11 @@ import javax.transaction.Transactional;
 
 import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.dao.TicketCrudDao;
-import gala.gala_api.email.SendTicketEmail;
+import gala.gala_api.service.email.SendTicketEmail;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
-import gala.gala_api.service.EmailService;
+import gala.gala_api.service.email.EmailService;
 import gala.gala_api.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,7 +90,7 @@ public class ApplicationController  {
     accountCrudDao.save(newAccount);
 
     Event newEvent = new Event();
-    newEvent.setName("Nothing");
+    newEvent.setName("A C A I D A");
     newEvent.setPlace("NoWhere");
     newEvent.setEventTime(new Date());
     newEvent.setCapacity(500);
