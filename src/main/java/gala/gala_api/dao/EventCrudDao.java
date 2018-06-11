@@ -1,17 +1,12 @@
 package gala.gala_api.dao;
 
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 import gala.gala_api.entity.Event;
 
 /**
- * This class conducts database actions for Event entities in the database.
+ * This repository conducts database actions for Event entities in the database.
  */
-@Component
-@Repository
-public class EventCrudDao extends GenericCrudDao<Event> {
-    public EventCrudDao() {
-        super(Event.class);
-    }
+public interface EventCrudDao extends CrudRepository<Event, Long> {
+
 }

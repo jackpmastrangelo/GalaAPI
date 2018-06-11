@@ -18,6 +18,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/loggedIn")
             .fullyAuthenticated()
-    .and().httpBasic();
+    .and().httpBasic()
+    .and().csrf().disable();
   }
 }
