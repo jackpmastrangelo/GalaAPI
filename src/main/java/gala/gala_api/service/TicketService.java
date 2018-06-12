@@ -2,6 +2,7 @@ package gala.gala_api.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -72,6 +73,30 @@ public class TicketService {
     }
   }
 
+  public CreateTicketResponse createTicketv2(long eventId, String email) {
+	  Optional<Event> maybeEvent = eventCrudDao.findById(eventId);
+
+	  if (maybeEvent.isPresent()) {
+	    Event event = maybeEvent.get();
+	    if (areTicketsRemaining(event)) {
+        Ticket ticket = createNewTicket(event, email);
+        ticketCrudDao.save(ticket);
+        generateAndSendQrCode(ticket);
+
+        return createResponse(true, "Ticket successfully added.");
+      } else {
+	      return createResponse(false, "Event capacity has already been reached.");
+      }
+    } else {
+	    return createResponse(false, "No event exists with id: " + eventId);
+    }
+  }
+
+  private boolean areTicketsRemaining(Event event) {
+    List<Ticket> existingTicketsForEvent = ticketCrudDao.findByEvent(event);
+    return event.getCapacity() > existingTicketsForEvent.size();
+  }
+
   public ValidateTicketResponse validateTicket(Long ticketId) {
     ValidateTicketResponse response = new ValidateTicketResponse();
     Ticket ticket;
@@ -107,6 +132,7 @@ public class TicketService {
     }
   }
 
+  //TODO Talk about error handling
   private void generateAndUploadQRCode(String qrValue) {
     QRCodeWriter qrCodeWriter = new QRCodeWriter();
     BitMatrix bitMatrix;

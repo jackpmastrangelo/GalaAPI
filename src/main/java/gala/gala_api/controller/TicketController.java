@@ -4,6 +4,8 @@ import gala.gala_api.responses.ValidateTicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import gala.gala_api.responses.CreateTicketResponse;
 import gala.gala_api.service.TicketService;
 

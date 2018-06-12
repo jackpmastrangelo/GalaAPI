@@ -19,6 +19,7 @@ public class EventService {
   @Autowired
   private EventCrudDao eventCrudDao;
 
+  //TODO: Reformat
   public void createEvent(
     Account account,
     String name,
@@ -36,6 +37,7 @@ public class EventService {
     eventCrudDao.save(created);
   }
 
+  //TODO: Rename
   public List<Event> getUserEvents(long userId) {
     Iterable<Event> allEvents = eventCrudDao.findAll();
 
@@ -48,6 +50,7 @@ public class EventService {
     return null;
   }
 
+  //TODO: Rename, throwing exceptions?
   public Event getEvent(long eventId) {
     return eventCrudDao.findById(eventId)
         .orElseThrow(() ->
