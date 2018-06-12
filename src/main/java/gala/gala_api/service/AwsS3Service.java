@@ -6,7 +6,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import javassist.bytecode.ByteArray;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -18,7 +17,7 @@ import java.io.InputStreamReader;
  * This service allows interaction with AWS S3 file storage.
  */
 @Service
-public class AWSS3Service {
+public class AwsS3Service {
 
   private AmazonS3 client = AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build();
 

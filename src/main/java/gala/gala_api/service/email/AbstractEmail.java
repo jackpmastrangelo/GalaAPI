@@ -1,4 +1,4 @@
-package gala.gala_api.email;
+package gala.gala_api.service.email;
 
 import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content;
@@ -8,7 +8,7 @@ import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 /**
  * This abstract class provides a helper method for creating an AWS SES email.
  */
-abstract class AbstractEmail implements IEmail {
+abstract class AbstractEmail extends SendEmailRequest {
 
   /**
    * Creates a SendEmailRequest for AWS SES with the given details.
@@ -20,7 +20,7 @@ abstract class AbstractEmail implements IEmail {
    *
    * @return A SendEmailRequest with a setup email that can be sent by EmailService.
    */
-  protected SendEmailRequest createEmailHelper(String fromEmail, String subject, String htmlBody, String textBody) {
+  protected void createEmailHelper(String fromEmail, String subject, String htmlBody, String textBody) {
     Content textContent = new Content().withCharset("UTF-8").withData(textBody);
 
     Content htmlContent = new Content().withCharset("UTF-8").withData(htmlBody);
@@ -31,6 +31,6 @@ abstract class AbstractEmail implements IEmail {
 
     Message message = new Message().withBody(body).withSubject(subjectContent);
 
-    return new SendEmailRequest().withMessage(message).withSource(fromEmail);
+    this.withMessage(message).withSource(fromEmail);
   }
 }

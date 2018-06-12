@@ -1,10 +1,9 @@
-package gala.gala_api.service;
+package gala.gala_api.service.email;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
-import gala.gala_api.email.IEmail;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,10 +20,9 @@ public class EmailService {
    * This class takes a single email address and an email and sends the email.
    *
    * @param toAddress The email address to send to.
-   * @param email The IEmail of the actual email to be sent.
+   * @param request The AWS SendEmailRequest object for the email to be sent.
    */
-  public void sendEmail(String toAddress, IEmail email) {
-    SendEmailRequest request = email.createEmailRequest();
+  public void sendEmail(String toAddress, SendEmailRequest request) {
     request.withDestination(new Destination().withToAddresses(toAddress));
 
     try {
