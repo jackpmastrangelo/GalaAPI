@@ -30,7 +30,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 
 `Parameters:` N/A
 
-`Expected behavior:` For the given userId, return a JSONArray containing all events for that user as JSONObjects.
+`Expected behavior:` For the given userId, which should be the same as the currently authenticated user, return a JSONArray containing all events for that user as JSONObjects.
 
 `Responses:` 
 
@@ -38,6 +38,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | --- | --- |
 | 200 | User has events, return a JSONArray containing all events for that user as JSONObjects. |
 | 204 | User was found, has no events yet.|
+| 403 | Wrong user was logged in, can only view your own events. |
 | 404 | User was not found, if they were authenticated and able to reach this thats probably an issue.|
 
 ### Create New Event (Secure)
@@ -68,7 +69,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | 403 | Wrong user is logged in, must be event owner to retrieve event |
 | 404 | Event was not found |
 
-### Request Ticket (Secure)
+### Request Ticket
 `URL:` /tickets/create (as String) `HTTP Method`: POST
 
 `Parameters:` eventId : String, email : String
