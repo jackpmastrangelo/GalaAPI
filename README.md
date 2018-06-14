@@ -54,19 +54,18 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | --- | --- |
 | 200 | Event creation was successful, return `eventId` as String. |
 
-### Get one event (Secure)
+### Get one event
 `URL:` /events/{eventId} (as String) `HTTP Method`: GET
 
 `Parameters:` N/A
 
-`Expected behavior:` If the logged in user is the owner of the event return the event as a JSONObject.
+`Expected behavior:` Return the event as a JSONObject.
 
 `Responses:` 
 
 | Response Code | Behaviour |
 | --- | --- |
 | 200 | Event was found, return it as a JSONObject. |
-| 403 | Wrong user is logged in, must be event owner to retrieve event |
 | 404 | Event was not found |
 
 ### Request Ticket
