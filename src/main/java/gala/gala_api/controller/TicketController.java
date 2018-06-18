@@ -15,7 +15,7 @@ public class TicketController {
   private TicketService ticketService;
 
   @PostMapping("/create")
-  public String requestTicket(@RequestParam("event_id") Long eventId, @RequestParam("email") String email, HttpServletResponse response) {
+  public String requestTicket(@RequestParam("event_id") String eventId, @RequestParam("email") String email, HttpServletResponse response) {
     return ticketService.createTicket(eventId, email, response);
   }
 

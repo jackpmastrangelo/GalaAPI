@@ -39,7 +39,7 @@ public class TicketService {
   @Autowired
   private EmailService emailService;
 
-	public String createTicket(Long eventId, String email, HttpServletResponse response) {
+	public String createTicket(String eventId, String email, HttpServletResponse response) {
     Ticket newTicket = new Ticket();
     newTicket.setEmail(email);
     newTicket.setStatus(TicketStatus.ACTIVE); //Might not be always the case, but for now makes sense.

@@ -7,6 +7,6 @@ import gala.gala_api.entity.Event;
 /**
  * This repository conducts database actions for Event entities in the database.
  */
-public interface EventCrudDao extends CrudRepository<Event, Long> {
+public interface EventCrudDao extends CrudRepository<Event, String> {
 
 }

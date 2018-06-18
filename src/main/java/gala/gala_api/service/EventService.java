@@ -48,9 +48,9 @@ public class EventService {
     return null;
   }
 
-  public Event getEvent(long eventId) {
+  public Event getEvent(String eventId) {
     return eventCrudDao.findById(eventId)
         .orElseThrow(() ->
-            new IllegalStateException(String.format("Event with id %d does not exist", eventId)));
+            new IllegalStateException(String.format("Event with id %s does not exist", eventId)));
   }
 }
