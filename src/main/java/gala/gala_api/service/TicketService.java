@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.google.zxing.BarcodeFormat;
@@ -20,8 +21,6 @@ import gala.gala_api.dao.TicketCrudDao;
 import gala.gala_api.entity.Event;
 import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
-import gala.gala_api.responses.CreateTicketResponse;
-import gala.gala_api.responses.ValidateTicketResponse;
 import org.springframework.stereotype.Service;
 
 @Transactional
@@ -40,8 +39,7 @@ public class TicketService {
   @Autowired
   private EmailService emailService;
 
-	public CreateTicketResponse createTicket(Long eventId, String email) {
-    CreateTicketResponse response = new CreateTicketResponse();
+	public String createTicket(Long eventId, String email, HttpServletResponse response) {
     Ticket newTicket = new Ticket();
     newTicket.setEmail(email);
     newTicket.setStatus(TicketStatus.ACTIVE); //Might not be always the case, but for now makes sense.
@@ -51,60 +49,64 @@ public class TicketService {
     if (maybeEvent.isPresent()) {
       event = maybeEvent.get();
     } else {
-      response.setSuccess(false);
-      response.setMessage("The event with Id: " + eventId.toString() + " could not be found");
-      return response;
+      response.setStatus(404); //Not found.
+      response.setHeader("gala-message", "Event with id " + eventId + " could not be found.");
+      return null;
     }
 
     if (event.getCapacity() > ticketCrudDao.findByEvent(event).size()) {
       newTicket.setEvent(event);
-      response.setTicket(ticketCrudDao.save(newTicket));
+      ticketCrudDao.save(newTicket);
 
-      this.generateAndUploadQRCode(newTicket.getId());
+      String ticketId = newTicket.getId();
+
+      this.generateAndUploadQRCode(ticketId);
       emailService.sendEmail(email, new SendTicketEmail(event.getName(), newTicket.getId()));
 
-      response.setSuccess(true);
-      response.setMessage("Ticket successfully added.");
-      return response;
+      response.setStatus(200); //Success
+      response.setHeader("gala-message","Ticket successfully added.");
+      return ticketId;
     } else {
-      response.setSuccess(false);
-      response.setMessage("Event capacity has already been reached.");
-      return response;
+      response.setStatus(409); //Conflict
+      response.setHeader("gala-message","Event capacity has already been reached.");
+      return null;
     }
   }
 
-  public ValidateTicketResponse validateTicket(Long ticketId) {
-    ValidateTicketResponse response = new ValidateTicketResponse();
+  public void validateTicket(String ticketId, Long eventId, HttpServletResponse response) {
     Ticket ticket;
     Optional<Ticket> maybeTicket = ticketCrudDao.findById(ticketId);
 
     if (maybeTicket.isPresent()) {
       ticket = maybeTicket.get();
     } else {
-      response.setSuccess(false);
-      response.setMessage("Ticket with Id " + ticketId.toString() + " could not be found.");
-      return response;
+      response.setStatus(404); //Not found
+      response.setHeader("gala-message", "Ticket with Id " + ticketId + " could not be found.");
+      return;
+    }
+
+    if (!ticket.getEvent().getId().equals(eventId)) {
+      response.setStatus(401);//Unauthorized
+      response.setHeader("gala-message", "Ticket with Id " + ticketId +
+              "does not belong to event with Id " + eventId.toString() + ".");
+      return;
     }
 
     if (ticket.getStatus() == TicketStatus.ACTIVE) {
       ticket.setStatus(TicketStatus.VALIDATED);
       ticketCrudDao.save(ticket);
-      response.setSuccess(true);
-      response.setMessage("Ticket with Id " + ticketId.toString() + " was successfully validated.");
-      return response;
+      response.setStatus(200);//Ok
+      response.setHeader("gala-message", "Ticket with Id " + ticketId + " was successfully validated.");
     } else if (ticket.getStatus() == TicketStatus.VOIDED) {
-      response.setSuccess(false);
-      response.setMessage("Ticket with Id " + ticketId.toString() + " was voided. Could not validate.");
-      return response;
+      response.setStatus(406);//Not acceptable (harsh)
+      response.setHeader("gala-message","Ticket with Id " + ticketId + " was voided. Could not validate.");
     } else if (ticket.getStatus() == TicketStatus.VALIDATED){
-      response.setSuccess(false);
-      response.setMessage("Ticket with Id " + ticketId.toString() + " has already been validated. Could not validate.");
-      return response;
+      response.setStatus(406);
+      response.setHeader("gala-message", "Ticket with Id " + ticketId + " has already been validated. Could not validate.");
     } else {
-      response.setSuccess(false);
-      response.setMessage("Could not ascertain whether ticket with Id "
-              + ticketId.toString() + " was active or not. Could not validate");
-      return response;
+      response.setStatus(406);
+      response.setHeader("gala-message", "Could not ascertain whether ticket with Id "
+              + ticketId + " was active or not. Could not validate");
     }
   }
 
