@@ -89,8 +89,7 @@ the given email address.
 
 `Parameters:` eventId : String, ticketId : String
 
-`Expected behavior:` If there is available capacity, create a new ticket associated with the given event, and send an email to
-the given email address.
+`Expected behavior:` If the given ticket belongs to the given event, and the ticket's status is active. Validate the ticket and make the ticket Validated. Otherwise return an unsuccessful response.
 
 `Responses:` 
 
