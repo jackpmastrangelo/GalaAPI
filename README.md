@@ -9,7 +9,7 @@ This section is for laying out our REST endpoints, their urls, their required pa
 `Note:` All endpoints will return 500 if something goes wrong and the action is unrecoverable.
 
 `Note:` All endpoints marked as (Secure) require being logged in to access, and therefore should accept the authentication
-key as a String in the header as well. These will return a 403 Forbidden if unauthenticated.
+key as a String in the header as well. These will return a 403 Forbidden if unauthenticated. For responses other than 200 you should add a header "gala-message" that gives the client more information.
 
 ### Login
 `URL:` /login `HTTP Method`: POST
