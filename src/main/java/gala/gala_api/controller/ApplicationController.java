@@ -90,7 +90,7 @@ public class ApplicationController  {
     accountCrudDao.save(newAccount);
 
     Event newEvent = new Event();
-    newEvent.setName("A C A I D A");
+    newEvent.setName("A I D A C A");
     newEvent.setPlace("NoWhere");
     newEvent.setEventTime(new Date());
     newEvent.setCapacity(500);
