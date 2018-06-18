@@ -9,7 +9,7 @@ This section is for laying out our REST endpoints, their urls, their required pa
 `Note:` All endpoints will return 500 if something goes wrong and the action is unrecoverable.
 
 `Note:` All endpoints marked as (Secure) require being logged in to access, and therefore should accept the authentication
-key as a String in the header as well. These will return a 403 Forbidden if unauthenticated.
+key as a String in the header as well. These will return a 403 Forbidden if unauthenticated. For responses other than 200 you should add a header "gala-message" that gives the client more information.
 
 ### Login
 `URL:` /login `HTTP Method`: POST
@@ -30,7 +30,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 
 `Parameters:` N/A
 
-`Expected behavior:` For the given userId, return a JSONArray containing all events for that user as JSONObjects.
+`Expected behavior:` For the given userId, which should be the same as the currently authenticated user, return a JSONArray containing all events for that user as JSONObjects.
 
 `Responses:` 
 
@@ -38,6 +38,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | --- | --- |
 | 200 | User has events, return a JSONArray containing all events for that user as JSONObjects. |
 | 204 | User was found, has no events yet.|
+| 403 | Wrong user was logged in, can only view your own events. |
 | 404 | User was not found, if they were authenticated and able to reach this thats probably an issue.|
 
 ### Create New Event (Secure)
@@ -53,22 +54,21 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | --- | --- |
 | 200 | Event creation was successful, return `eventId` as String. |
 
-### Get one event (Secure)
+### Get one event
 `URL:` /events/{eventId} (as String) `HTTP Method`: GET
 
 `Parameters:` N/A
 
-`Expected behavior:` If the logged in user is the owner of the event return the event as a JSONObject.
+`Expected behavior:` Return the event as a JSONObject.
 
 `Responses:` 
 
 | Response Code | Behaviour |
 | --- | --- |
 | 200 | Event was found, return it as a JSONObject. |
-| 403 | Wrong user is logged in, must be event owner to retrieve event |
 | 404 | Event was not found |
 
-### Request Ticket (Secure)
+### Request Ticket
 `URL:` /tickets/create (as String) `HTTP Method`: POST
 
 `Parameters:` eventId : String, email : String
@@ -89,8 +89,7 @@ the given email address.
 
 `Parameters:` eventId : String, ticketId : String
 
-`Expected behavior:` If there is available capacity, create a new ticket associated with the given event, and send an email to
-the given email address.
+`Expected behavior:` If the given ticket belongs to the given event, and the ticket's status is active. Validate the ticket and make the ticket Validated. Otherwise return an unsuccessful response.
 
 `Responses:` 
 
