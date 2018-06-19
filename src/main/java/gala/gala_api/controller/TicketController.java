@@ -27,8 +27,9 @@ public class TicketController {
   @Autowired
   private EmailService emailService;
 
-  @PostMapping("/create")
-  public Ticket requestTicket(@RequestParam("event_id") String eventId, @RequestParam("email") String email, HttpServletResponse response) {
+  @PostMapping
+  public Ticket requestTicket(@RequestParam("event_id") String eventId,
+                              @RequestParam("email") String email, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
 
     if (maybeEvent.isPresent()) {
@@ -57,7 +58,8 @@ public class TicketController {
 
   @PutMapping("/validate")
   @ResponseStatus
-  public void validateTicket(@RequestParam("ticket_id") String ticketId, @RequestParam("event_id") String eventId, HttpServletResponse response) {
+  public void validateTicket(@RequestParam("ticket_id") String ticketId,
+                             @RequestParam("event_id") String eventId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
     if (maybeTicket.isPresent()) {
       Ticket ticket = maybeTicket.get();
@@ -70,11 +72,13 @@ public class TicketController {
             break;
           case VOIDED:
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);//Not acceptable (harsh)
-            response.setHeader("gala-message","Ticket with Id " + ticketId + " was voided. Could not validate.");
+            response.setHeader("gala-message","Ticket with Id " + ticketId +
+                    " was voided. Could not validate.");
             break;
           case VALIDATED:
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            response.setHeader("gala-message", "Ticket with Id " + ticketId + " has already been validated. Could not validate.");
+            response.setHeader("gala-message", "Ticket with Id " + ticketId +
+                    " has already been validated. Could not validate.");
             break;
         }
       } else {
