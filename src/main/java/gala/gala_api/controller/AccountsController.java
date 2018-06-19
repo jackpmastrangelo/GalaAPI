@@ -20,7 +20,7 @@ public class AccountsController {
     this.accountService = accountService;
   }
 
-  @PostMapping("/create")
+  @PostMapping
   @ResponseStatus(code = HttpStatus.OK)
   public void createAccount(String email, String firstName, String lastName, String password) {
     accountService.createAccount(email, firstName, lastName, password);

@@ -74,4 +74,12 @@ public class TicketService {
   public Optional<Ticket> retrieveTicket(String ticketId) {
     return ticketCrudDao.findById(ticketId);
   }
+
+  public void setTicketCrudDao(TicketCrudDao ticketCrudDao) {
+    this.ticketCrudDao = ticketCrudDao;
+  }
+
+  public void setAwsS3Service(AwsS3Service awsS3Service) {
+    this.awsS3Service = awsS3Service;
+  }
 }

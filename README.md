@@ -52,7 +52,9 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 
 | Response Code | Behaviour |
 | --- | --- |
-| 200 | Event creation was successful, return `eventId` as String. |
+| 200 | Event creation was successful, return Event. |
+| 403 | Wrong user was logged in, can only create events for your own account. |
+| 404 | User was not found, if they were authenticated and able to reach this thats probably an issue.|
 
 ### Get one event
 `URL:` /events/{eventId} (as String) `HTTP Method`: GET
