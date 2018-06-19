@@ -98,7 +98,7 @@ public class ApplicationController  {
 
     eventCrudDao.save(newEvent);
 
-    ticketService.createTicket(newEvent.getId(), "jmastrangelo111@gmail.com");
+    ticketService.createTicket(newEvent, "jmastrangelo111@gmail.com");
 
     return "Test Email Sent";
   }

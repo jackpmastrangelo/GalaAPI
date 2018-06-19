@@ -3,12 +3,15 @@ package gala.gala_api.service;
 import gala.gala_api.dao.EventCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
+import gala.gala_api.entity.Ticket;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,6 +38,10 @@ public class EventService {
     created.setCapacity(capacity);
 
     eventCrudDao.save(created);
+  }
+
+  public Optional<Event> findEvent(String eventId) {
+    return eventCrudDao.findById(eventId);
   }
 
   //TODO: Rename
