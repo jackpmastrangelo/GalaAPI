@@ -15,13 +15,13 @@ public class TicketController {
   private TicketService ticketService;
 
   @PostMapping("/create")
-  public String requestTicket(@RequestParam("event_id") String eventId, @RequestParam("email") String email, HttpServletResponse response) {
+  public String requestTicket(@RequestParam("eventId") String eventId, @RequestParam("email") String email, HttpServletResponse response) {
     return ticketService.createTicket(eventId, email, response);
   }
 
   @PutMapping("/validate")
   @ResponseStatus
-  public void validateTicket(@RequestParam("ticket_id") String ticketId, @RequestParam("event_id") Long eventId, HttpServletResponse response) {
+  public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") Long eventId, HttpServletResponse response) {
     ticketService.validateTicket(ticketId, eventId, response);
   }
 }
