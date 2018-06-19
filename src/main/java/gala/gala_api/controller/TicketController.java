@@ -1,5 +1,6 @@
 package gala.gala_api.controller;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,12 +46,12 @@ public class TicketController {
         response.setHeader("gala-message","Ticket successfully added.");
         return ticket;
       } else {
-        response.setStatus(HttpServletResponse.SC_CONFLICT); //Conflict
-        response.setHeader("gala-message","Event capacity has already been reached.");
+        assignErrorStatusAndMessage(response, HttpStatus.SC_CONFLICT, "Event capacity "
+                + "has already been reached.");
       }
     } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND); //Not found.
-      response.setHeader("gala-message", "Event with id " + eventId + " could not be found.");
+      assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_FOUND, "Event with id "
+              + eventId + " could not be found.");
     }
 
     return null;
@@ -70,14 +71,12 @@ public class TicketController {
             response.setStatus(HttpServletResponse.SC_OK);
             break;
           case VOIDED:
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);//Not acceptable (harsh)
-            response.setHeader("gala-message","Ticket with Id " + ticketId +
-                    " was voided. Could not validate.");
+            assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE,"Ticket with Id "
+                    + ticketId + " was voided. Could not validate.");
             break;
           case VALIDATED:
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            response.setHeader("gala-message", "Ticket with Id " + ticketId +
-                    " has already been validated. Could not validate.");
+            assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE,"Ticket with Id "
+                    + ticketId + " has already been validated. Could not validate.");
             break;
         }
       } else {
@@ -86,5 +85,10 @@ public class TicketController {
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
+  }
+
+  private void assignErrorStatusAndMessage(HttpServletResponse response, int statusCode, String errorMessage) {
+    response.setStatus(statusCode);
+    response.setHeader("gala-message", errorMessage);
   }
 }
