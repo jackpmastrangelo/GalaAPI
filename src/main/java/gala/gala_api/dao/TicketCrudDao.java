@@ -10,6 +10,6 @@ import java.util.List;
 /**
  * This class conducts database actions for Ticket entities in the database.
 */
-public interface TicketCrudDao extends CrudRepository<Ticket, Long> {
+public interface TicketCrudDao extends CrudRepository<Ticket, String> {
   List<Ticket> findByEvent(Event event);
 }

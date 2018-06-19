@@ -16,10 +16,11 @@ import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
 
 @Component
-@Qualifier("accountLoaderService")
+@Qualifier("accountService")
 public class AccountLoaderService implements UserDetailsService {
 
-  private static final String USER_ROLE = "USER";
+  private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS =
+          AuthorityUtils.createAuthorityList("USER");
 
   private final AccountCrudDao accountCrudDao;
 
@@ -33,9 +34,7 @@ public class AccountLoaderService implements UserDetailsService {
     Account account = accountCrudDao.findByEmail(username);
 
     if (account != null) {
-      List<GrantedAuthority> rolesForAllUsers = AuthorityUtils.createAuthorityList(USER_ROLE);
-
-      return new User(account.getEmail(), account.getPassword(), rolesForAllUsers);
+      return new User(account.getEmail(), account.getPassword(), ROLES_FOR_ALL_USERS);
     } else {
       throw new UsernameNotFoundException("Could not find Account for email: " + username);
     }

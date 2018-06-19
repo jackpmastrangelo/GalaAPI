@@ -12,11 +12,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-            .antMatchers("/")
+            .antMatchers("/**/create")
             .permitAll()
             .and()
             .authorizeRequests()
-            .antMatchers("/loggedIn")
+            .antMatchers("/tickets/validate")
             .fullyAuthenticated()
     .and().httpBasic()
     .and().csrf().disable();

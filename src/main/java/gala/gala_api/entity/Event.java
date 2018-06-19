@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,8 +30,10 @@ public class Event implements Serializable {
    * An Events's unique Id.
    */
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
+  @Column(unique = true)
+  private String id;
 
   @NotBlank
   private String name;
@@ -62,10 +65,6 @@ public class Event implements Serializable {
   @Temporal(TemporalType.TIMESTAMP)
   @UpdateTimestamp
   private Date updatedAt;
-
-  public Long getId() {
-    return this.id;
-  }
 
   /**
    * Get the date this Event entity was created at.
@@ -101,10 +100,6 @@ public class Event implements Serializable {
    */
   public Integer getCapacity() {
     return this.capacity;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   /**
@@ -156,5 +151,13 @@ public class Event implements Serializable {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 }
