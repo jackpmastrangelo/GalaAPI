@@ -22,44 +22,24 @@ public class EventService {
   @Autowired
   private EventCrudDao eventCrudDao;
 
-  //TODO: Reformat
-  public void createEvent(
-    Account account,
-    String name,
-    String place,
-    Date eventTime,
-    int capacity
-  ) {
-    Event created = new Event();
-    created.setAccount(account);
-    created.setName(name);
-    created.setPlace(place);
-    created.setEventTime(eventTime);
-    created.setCapacity(capacity);
+  public Event createEvent(Account account, String name, String place, Date eventTime, int capacity) {
+    Event event = new Event();
+    event.setAccount(account);
+    event.setName(name);
+    event.setPlace(place);
+    event.setEventTime(eventTime);
+    event.setCapacity(capacity);
 
-    eventCrudDao.save(created);
+    eventCrudDao.save(event);
+
+    return event;
   }
 
   public Optional<Event> findEvent(String eventId) {
     return eventCrudDao.findById(eventId);
   }
 
-  //TODO: Rename
-  public List<Event> getUserEvents(long userId) {
-    Iterable<Event> allEvents = eventCrudDao.findAll();
-
-    //Commenting out for now because Iterables do not suppoer stream. Will have to be changed somehow.
-    /**
-    return allEvents.stream().filter(event -> event.getAccount().getId() == userId)
-        .collect(toList());
-     */
-
-    return null;
-  }
-
-  public Event getEvent(String eventId) {
-    return eventCrudDao.findById(eventId)
-        .orElseThrow(() ->
-            new IllegalStateException(String.format("Event with id %s does not exist", eventId)));
+  public List<Event> retrieveEventsByAccount(Account account) {
+    return eventCrudDao.findAllByAccount(account);
   }
 }

@@ -9,6 +9,8 @@ import javax.transaction.Transactional;
 import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
 
+import java.util.Optional;
+
 @Component
 @Transactional
 public class AccountService {
@@ -30,5 +32,9 @@ public class AccountService {
     account.setPassword(passwordEncoder.encode(password));
 
     accountCrudDao.save(account);
+  }
+
+  public Optional<Account> findAccountById(Long accountId) {
+    return accountCrudDao.findById(accountId);
   }
 }
