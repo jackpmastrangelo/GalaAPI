@@ -58,8 +58,7 @@ public class TicketController {
 
   @PutMapping("/validate")
   @ResponseStatus
-  public void validateTicket(@RequestParam("ticket_id") String ticketId,
-                             @RequestParam("event_id") String eventId, HttpServletResponse response) {
+  public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
     if (maybeTicket.isPresent()) {
       Ticket ticket = maybeTicket.get();
