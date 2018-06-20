@@ -15,6 +15,9 @@ import gala.gala_api.service.email.SendTicketEmail;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Controller for API endpoints relating to tickets.
+ */
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
@@ -28,6 +31,15 @@ public class TicketController {
   @Autowired
   private EmailService emailService;
 
+  /**
+   * Creates a ticket for the given event, generates a QR Code with the given ticketId, and sends
+   * an email with the QR code.
+   *
+   * @param eventId Id of the event to create a ticket for.
+   * @param email Email to send the QR code to.
+   * @param response Response passed in by Spring.
+   * @return The ticket that was created.
+   */
   @PostMapping
   public Ticket requestTicket(@RequestParam("event_id") String eventId,
                               @RequestParam("email") String email, HttpServletResponse response) {
@@ -57,6 +69,13 @@ public class TicketController {
     return null;
   }
 
+  /**
+   * Checks the status of the given Ticket and validates it if possible.
+   *
+   * @param ticketId Id of the ticket to be validated.
+   * @param eventId Id of the event that the ticket is being validated for.
+   * @param response Response passed in by Spring.
+   */
   @PutMapping("/validate")
   @ResponseStatus
   public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") String eventId, HttpServletResponse response) {

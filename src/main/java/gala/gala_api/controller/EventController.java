@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for API endpoints relating to events,
+ */
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -21,6 +24,14 @@ public class EventController {
 
   private AccountService accountService;
 
+  /**
+   * This endpoint returns a JSONArray of all the events from the associated user. Authenticated user must be same as
+   * user who's events are being returned.
+   *
+   * @param accountId The account of the user who's events are being requested.
+   * @param response Response passed in by Spring.
+   * @return The events if successful, otherwise return a not 200 status code and null. Refer to README API Spec.
+   */
   @GetMapping("/users/{accountId}")
   public List<Event> retrieveUserEvents(@PathVariable("accountId") Long accountId, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
@@ -44,8 +55,22 @@ public class EventController {
     return null;
   }
 
+  //TODO validation on these properties resulting in different status code.
+  /**
+   * Creates a new event for the given account with the given parameters.
+   *
+   * @param accountId The account of the owner of the new event.
+   * @param name The name of the event.
+   * @param place String defining where the event will take place.
+   * @param eventTime Datetime of the event.
+   * @param capacity Maximum number of tickets that can be generated.
+   * @param response Response object passed in by Spring
+   *
+   * @return The created Event if successful, otherwise different status codes. Refer to README API Spec.
+   */
   @PostMapping("/users/{accountId}")
-  public Event createNewUserEvent(@PathVariable("accountId") Long accountId, String name, String place, Date eventTime, int capacity, HttpServletResponse response) {
+  public Event createNewUserEvent(@PathVariable("accountId") Long accountId,
+                                  String name, String place, Date eventTime, int capacity, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
     if (maybeAccount.isPresent()) {
@@ -61,6 +86,13 @@ public class EventController {
     return null;
   }
 
+  /**
+   * Retrieves the event with the given Id.
+   *
+   * @param eventId The Id of the desired event.
+   * @param response Response object passed in by Spring
+   * @return The Event if found, otherwise different status codes. Refer to README API Spec.
+   */
   @GetMapping("/events/{eventId}")
   public Event retrieveEventById(@PathVariable("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
