@@ -3,6 +3,8 @@ package gala.gala_api.controller;
 import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,11 @@ public class EventController {
    * @return The events if successful, otherwise return a not 200 status code and null. Refer to README API Spec.
    */
   @GetMapping("/users")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Successfully retrieved user events."),
+          @ApiResponse(code = 204, message = "User had no events."),
+          @ApiResponse(code = 404, message = "User could not be found.")
+  })
   public List<Event> retrieveUserEvents(@RequestParam("accountId") Long accountId, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
@@ -69,6 +76,10 @@ public class EventController {
    * @return The created Event if successful, otherwise different status codes. Refer to README API Spec.
    */
   @PostMapping("/users")
+  @ApiResponses(value = {
+          @ApiResponse(code=200, message = "Event successfully created"),
+          @ApiResponse(code=404, message = "Account not found")
+  })
   public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
                                   @RequestParam("name") String name,
                                   @RequestParam("place") String place,
@@ -97,6 +108,10 @@ public class EventController {
    * @return The Event if found, otherwise different status codes. Refer to README API Spec.
    */
   @GetMapping("/{eventId}")
+  @ApiResponses(value = {
+          @ApiResponse(code=200, message = "Event found successfully."),
+          @ApiResponse(code=404, message = "Event not found.")
+  })
   public Event retrieveEventById(@RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
 

@@ -1,5 +1,7 @@
 package gala.gala_api.controller;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,11 @@ public class TicketController {
    * @return The ticket that was created.
    */
   @PostMapping
+  @ApiResponses(value = {
+          @ApiResponse(code=200, message = "Ticket successfully added."),
+          @ApiResponse(code=404, message = "Event not found"),
+          @ApiResponse(code=409, message = "Event capacity has already been reached.")
+  })
   public Ticket requestTicket(@RequestParam("event_id") String eventId,
                               @RequestParam("email") String email, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
@@ -78,6 +85,12 @@ public class TicketController {
    */
   @PutMapping("/validate")
   @ResponseStatus
+  @ApiResponses(value = {
+          @ApiResponse(code=200, message = "Ticket successfully validated."),
+          @ApiResponse(code=404, message = "Ticket could not be found."),
+          @ApiResponse(code=406, message = "Ticket could not be validated."),
+          @ApiResponse(code=409, message = "Ticket did not belong to the given event.")
+  })
   public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
     if (maybeTicket.isPresent()) {
@@ -99,7 +112,7 @@ public class TicketController {
             break;
         }
       } else {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //TODO Right HTTP response?
+        response.setStatus(HttpServletResponse.SC_CONFLICT); //TODO Right HTTP response?
       }
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
