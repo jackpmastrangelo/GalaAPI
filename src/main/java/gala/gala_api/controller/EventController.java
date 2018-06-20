@@ -32,8 +32,8 @@ public class EventController {
    * @param response Response passed in by Spring.
    * @return The events if successful, otherwise return a not 200 status code and null. Refer to README API Spec.
    */
-  @GetMapping("/users/{accountId}")
-  public List<Event> retrieveUserEvents(@PathVariable("accountId") Long accountId, HttpServletResponse response) {
+  @GetMapping("/users")
+  public List<Event> retrieveUserEvents(@RequestParam("accountId") Long accountId, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
     if (maybeAccount.isPresent()) {
@@ -68,9 +68,12 @@ public class EventController {
    *
    * @return The created Event if successful, otherwise different status codes. Refer to README API Spec.
    */
-  @PostMapping("/users/{accountId}")
-  public Event createNewUserEvent(@PathVariable("accountId") Long accountId,
-                                  String name, String place, Date eventTime, int capacity, HttpServletResponse response) {
+  @PostMapping("/users")
+  public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
+                                  @RequestParam("name") String name,
+                                  @RequestParam("place") String place,
+                                  @RequestParam("eventTime") Date eventTime,
+                                  @RequestParam("capacity") int capacity, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
     if (maybeAccount.isPresent()) {
@@ -93,8 +96,8 @@ public class EventController {
    * @param response Response object passed in by Spring
    * @return The Event if found, otherwise different status codes. Refer to README API Spec.
    */
-  @GetMapping("/events/{eventId}")
-  public Event retrieveEventById(@PathVariable("eventId") String eventId, HttpServletResponse response) {
+  @GetMapping("/{eventId}")
+  public Event retrieveEventById(@RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
 
     if (maybeEvent.isPresent()) {
