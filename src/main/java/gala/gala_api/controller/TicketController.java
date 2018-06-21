@@ -84,7 +84,7 @@ public class TicketController {
    * @param response Response passed in by Spring.
    */
   @PutMapping("/validate")
-  @ResponseStatus
+  @ResponseBody
   @ApiResponses(value = {
           @ApiResponse(code=200, message = "Ticket successfully validated."),
           @ApiResponse(code=404, message = "Ticket could not be found."),

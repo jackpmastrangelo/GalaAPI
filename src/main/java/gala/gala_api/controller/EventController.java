@@ -6,6 +6,7 @@ import gala.gala_api.service.EventService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import gala.gala_api.entity.Event;
@@ -83,7 +84,7 @@ public class EventController {
   public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
                                   @RequestParam("name") String name,
                                   @RequestParam("place") String place,
-                                  @RequestParam("eventTime") Date eventTime,
+                                  @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
                                   @RequestParam("capacity") int capacity, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
