@@ -1,5 +1,6 @@
 package gala.gala_api.controller;
 
+import gala.gala_api.service.AwsS3Service;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
@@ -24,14 +25,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/tickets")
 public class TicketController {
 
-  @Autowired
   private TicketService ticketService;
 
-  @Autowired
   private EventService eventService;
 
-  @Autowired
   private EmailService emailService;
+
+  private AwsS3Service awsS3Service;
 
   /**
    * Creates a ticket for the given event, generates a QR Code with the given ticketId, and sends
@@ -48,7 +48,7 @@ public class TicketController {
           @ApiResponse(code=404, message = "Event not found"),
           @ApiResponse(code=409, message = "Event capacity has already been reached.")
   })
-  public Ticket requestTicket(@RequestParam("event_id") String eventId,
+  public Ticket requestTicket(@RequestParam("eventId") String eventId,
                               @RequestParam("email") String email, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
 
@@ -59,7 +59,7 @@ public class TicketController {
         Ticket ticket = ticketService.createTicket(event, email);
 
         ticketService.generateAndUploadQRCode(ticket.getId());
-        emailService.sendEmail(email, new SendTicketEmail(event.getName(), ticket.getId()));
+        emailService.sendEmail(email, new SendTicketEmail(event.getName(), ticket.getId(), awsS3Service));
 
         response.setStatus(HttpServletResponse.SC_OK); //Success
         response.setHeader("gala-message","Ticket successfully added.");
@@ -122,5 +122,25 @@ public class TicketController {
   private void assignErrorStatusAndMessage(HttpServletResponse response, int statusCode, String errorMessage) {
     response.setStatus(statusCode);
     response.setHeader("gala-message", errorMessage);
+  }
+
+  @Autowired
+  public void setTicketService(TicketService ticketService) {
+    this.ticketService = ticketService;
+  }
+
+  @Autowired
+  public void setEventService(EventService eventService) {
+    this.eventService = eventService;
+  }
+
+  @Autowired
+  public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
+  }
+
+  @Autowired
+  public void setAwsS3Service(AwsS3Service awsS3Service) {
+    this.awsS3Service = awsS3Service;
   }
 }

@@ -13,16 +13,16 @@ import gala.gala_api.service.AccountService;
 @RequestMapping("/accounts")
 public class AccountsController {
 
-  private final AccountService accountService;
-
-  @Autowired
-  public AccountsController(AccountService accountService) {
-    this.accountService = accountService;
-  }
+  private AccountService accountService;
 
   @PostMapping
   @ResponseStatus(code = HttpStatus.OK)
   public void createAccount(String email, String firstName, String lastName, String password) {
     accountService.createAccount(email, firstName, lastName, password);
+  }
+
+  @Autowired
+  public void setAccountService(AccountService accountService) {
+    this.accountService = accountService;
   }
 }

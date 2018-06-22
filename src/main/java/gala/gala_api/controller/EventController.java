@@ -20,6 +20,7 @@ import java.util.Optional;
  * Controller for API endpoints relating to events,
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/events")
 public class EventController {
 

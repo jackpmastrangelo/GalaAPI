@@ -12,8 +12,7 @@ public class SendTicketEmail extends AbstractEmail {
    * Constructs a new SendTicketEmail.
    * @param eventName The name of the event that the ticket was generated for.
    */
-  public SendTicketEmail(String eventName, String qrCodeNumber) {
-    AwsS3Service awsS3Service = new AwsS3Service();
+  public SendTicketEmail(String eventName, String qrCodeNumber, AwsS3Service awsS3Service) {
 
     String subject = "Your ticket for " + eventName + " has arrived!";
 
