@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/tickets")
 public class TicketController {
 
+  //TODO Decide on consistent Autowiring strategy
   private TicketService ticketService;
 
   private EventService eventService;
@@ -44,9 +45,9 @@ public class TicketController {
    */
   @PostMapping
   @ApiResponses(value = {
-          @ApiResponse(code=200, message = "Ticket successfully added."),
-          @ApiResponse(code=404, message = "Event not found"),
-          @ApiResponse(code=409, message = "Event capacity has already been reached.")
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Ticket successfully added."),
+          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Event not found"),
+          @ApiResponse(code=HttpStatus.SC_CONFLICT, message = "Event capacity has already been reached.")
   })
   public Ticket requestTicket(@RequestParam("eventId") String eventId,
                               @RequestParam("email") String email, HttpServletResponse response) {
@@ -61,15 +62,14 @@ public class TicketController {
         ticketService.generateAndUploadQRCode(ticket.getId());
         emailService.sendEmail(email, new SendTicketEmail(event.getName(), ticket.getId(), awsS3Service));
 
-        response.setStatus(HttpServletResponse.SC_OK); //Success
-        response.setHeader("gala-message","Ticket successfully added.");
+        GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_OK,"Ticket successfully added.");
         return ticket;
       } else {
-        assignErrorStatusAndMessage(response, HttpStatus.SC_CONFLICT, "Event capacity "
+        GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_CONFLICT, "Event capacity "
                 + "has already been reached.");
       }
     } else {
-      assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_FOUND, "Event with id "
+      GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_FOUND, "Event with id "
               + eventId + " could not be found.");
     }
 
@@ -85,29 +85,29 @@ public class TicketController {
    */
   @PutMapping("/validate")
   @ResponseBody
-  @ApiResponses(value = {
-          @ApiResponse(code=200, message = "Ticket successfully validated."),
-          @ApiResponse(code=404, message = "Ticket could not be found."),
-          @ApiResponse(code=406, message = "Ticket could not be validated."),
-          @ApiResponse(code=409, message = "Ticket did not belong to the given event.")
+  @ApiResponses(value = { //TODO Do these actually do anything or are they just for Swagger?
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Ticket successfully validated."),
+          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Ticket could not be found."),
+          @ApiResponse(code=HttpStatus.SC_NOT_ACCEPTABLE, message = "Ticket could not be validated."),
+          @ApiResponse(code=HttpStatus.SC_CONFLICT, message = "Ticket did not belong to the given event.")
   })
   public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
     if (maybeTicket.isPresent()) {
       Ticket ticket = maybeTicket.get();
 
-      if (ticket.getEvent().getId().equals(eventId)) {
+      if (isTicketForEvent(eventId, ticket)) {
         switch (ticket.getStatus()) {
           case ACTIVE:
             ticketService.validateTicket(ticket);
             response.setStatus(HttpServletResponse.SC_OK);
             break;
           case VOIDED:
-            assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE,"Ticket with Id "
+            GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE, "Ticket with Id "
                     + ticketId + " was voided. Could not validate.");
             break;
           case VALIDATED:
-            assignErrorStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE,"Ticket with Id "
+            GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE, "Ticket with Id "
                     + ticketId + " has already been validated. Could not validate.");
             break;
         }
@@ -119,9 +119,8 @@ public class TicketController {
     }
   }
 
-  private void assignErrorStatusAndMessage(HttpServletResponse response, int statusCode, String errorMessage) {
-    response.setStatus(statusCode);
-    response.setHeader("gala-message", errorMessage);
+  private boolean isTicketForEvent(String eventId, Ticket ticket) {
+    return ticket.getEvent().getId().equals(eventId);
   }
 
   @Autowired

@@ -81,6 +81,4 @@ public class TicketServiceTest {
 
     assertEquals(maybeTicket.get(), service.retrieveTicket("One").get());
   }
-
-
 }

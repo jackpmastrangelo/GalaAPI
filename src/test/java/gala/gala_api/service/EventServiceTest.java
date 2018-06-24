@@ -59,7 +59,7 @@ public class EventServiceTest {
     eventService.setEventCrudDao(eventCrudDao);
 
     List<Event> eventList = eventService.retrieveEventsByAccount(account);
-    assertEquals(event1, eventList.get(0));
+    assertEquals(event1, eventList.get(0)); //TODO event1.equals(event2) is true
     assertEquals(event2, eventList.get(1));
     assertEquals(2, eventList.size());
   }
