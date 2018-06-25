@@ -43,7 +43,7 @@ public class EventController {
           @ApiResponse(code = 404, message = "User could not be found.")
   })
   public List<Event> retrieveUserEvents(@RequestParam("accountId") Long accountId, HttpServletResponse response) {
-    Optional<Account> maybeAccount = accountService.findAccountById(accountId);
+    Optional<Account> maybeAccount = accountService.findById(accountId);
 
     if (maybeAccount.isPresent()) {
       Account account = maybeAccount.get();
@@ -87,7 +87,7 @@ public class EventController {
                                   @RequestParam("place") String place,
                                   @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
                                   @RequestParam("capacity") int capacity, HttpServletResponse response) {
-    Optional<Account> maybeAccount = accountService.findAccountById(accountId);
+    Optional<Account> maybeAccount = accountService.findById(accountId);
 
     if (maybeAccount.isPresent()) {
       Account account = maybeAccount.get();
