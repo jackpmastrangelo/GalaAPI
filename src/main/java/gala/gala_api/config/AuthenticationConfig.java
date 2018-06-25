@@ -16,7 +16,7 @@ public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter 
   private final UserDetailsService userDetailsService;
 
   @Autowired
-  public AuthenticationConfig(@Qualifier("accountLoaderService")
+  public AuthenticationConfig(@Qualifier("accountLoaderSecurityService")
                                         UserDetailsService userDetailsService) {
     this.userDetailsService = userDetailsService;
   }

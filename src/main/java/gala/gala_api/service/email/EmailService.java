@@ -12,11 +12,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-  private AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder
+  private AmazonSimpleEmailService amazonEmailService = AmazonSimpleEmailServiceClientBuilder
           .standard().withRegion(Regions.US_EAST_1).build();
 
-
-  /**
+   /** //TODO javadoc should say method not class
    * This class takes a single email address and an email and sends the email.
    *
    * @param toAddress The email address to send to.
@@ -24,11 +23,8 @@ public class EmailService {
    */
   public void sendEmail(String toAddress, SendEmailRequest request) {
     request.withDestination(new Destination().withToAddresses(toAddress));
-
-    try {
-      client.sendEmail(request);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    amazonEmailService.sendEmail(request);
   }
+
+  //TODO method signature, I think it would be a good idea to isolate email-sending more
 }

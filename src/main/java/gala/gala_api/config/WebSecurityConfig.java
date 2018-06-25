@@ -14,10 +14,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.authorizeRequests()
             .antMatchers("/**")
             .permitAll()
-            .and()
-            .authorizeRequests()
-            .antMatchers("/tickets/validate")
-            .fullyAuthenticated()
     .and().httpBasic()
     .and().csrf().disable();
   }

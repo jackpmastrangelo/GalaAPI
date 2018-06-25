@@ -28,19 +28,19 @@ public class AwsS3Service {
    * @param key The actual key of the file within the bucket (This is essentially a filepath within the bucket.)
    *
    * @return The s3 file's contents as a String.
-   * @throws IOException If there is an issue reading the file.
-   */
-  public String getS3ObjectAsString(String bucket, String key) throws IOException {
+   */ //TODO are there options other than String? Just curious
+  public String getS3ObjectAsString(String bucket, String key) {
     S3Object emailTemplateObj = client.getObject(bucket, key);
-
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));
 
     StringBuilder result = new StringBuilder();
-
     String line;
-
-    while ((line = s3Reader.readLine()) != null) {
-      result.append(line);
+    try {
+      while ((line = s3Reader.readLine()) != null) {
+        result.append(line);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
 
     return result.toString();

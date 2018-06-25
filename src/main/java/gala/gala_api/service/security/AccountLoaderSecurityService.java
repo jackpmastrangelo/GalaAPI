@@ -1,4 +1,4 @@
-package gala.gala_api.security;
+package gala.gala_api.service.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,8 +16,8 @@ import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
 
 @Component
-@Qualifier("accountService")
-public class AccountLoaderService implements UserDetailsService {
+@Qualifier("accountLoaderService")
+public class AccountLoaderSecurityService implements UserDetailsService {
 
   private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS =
           AuthorityUtils.createAuthorityList("USER");
@@ -25,7 +25,7 @@ public class AccountLoaderService implements UserDetailsService {
   private final AccountCrudDao accountCrudDao;
 
   @Autowired
-  public AccountLoaderService(AccountCrudDao accountCrudDao) {
+  public AccountLoaderSecurityService(AccountCrudDao accountCrudDao) {
     this.accountCrudDao = accountCrudDao;
   }
 

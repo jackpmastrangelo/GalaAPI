@@ -5,9 +5,16 @@ import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import gala.gala_api.entity.Event;
 
@@ -20,7 +27,7 @@ import java.util.Optional;
  * Controller for API endpoints relating to events,
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000") //TODO what is this?
 @RequestMapping("/events")
 public class EventController {
 
@@ -38,16 +45,15 @@ public class EventController {
    */
   @GetMapping("/users")
   @ApiResponses(value = {
-          @ApiResponse(code = 200, message = "Successfully retrieved user events."),
-          @ApiResponse(code = 204, message = "User had no events."),
-          @ApiResponse(code = 404, message = "User could not be found.")
-  })
+          @ApiResponse(code = HttpStatus.SC_OK, message = "Successfully retrieved user events."),
+          @ApiResponse(code = HttpStatus.SC_NO_CONTENT, message = "User had no events."), //TODO Why is no events invalid?
+          @ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "User could not be found.")
+  }) //TODO remove accountid from the request params
   public List<Event> retrieveUserEvents(@RequestParam("accountId") Long accountId, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findById(accountId);
 
     if (maybeAccount.isPresent()) {
       Account account = maybeAccount.get();
-
       List<Event> events = eventService.retrieveEventsByAccount(account);
 
       if (events.size() > 0) {
@@ -65,6 +71,7 @@ public class EventController {
   }
 
   //TODO validation on these properties resulting in different status code.
+  //TODO why /users?
   /**
    * Creates a new event for the given account with the given parameters.
    *
@@ -79,10 +86,10 @@ public class EventController {
    */
   @PostMapping("/users")
   @ApiResponses(value = {
-          @ApiResponse(code=200, message = "Event successfully created"),
-          @ApiResponse(code=404, message = "Account not found")
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created"),
+          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Account not found")
   })
-  public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
+  public Event createNewUserEvent(@RequestParam("accountId") Long accountId, //TODO don't pass this in, get it from the session
                                   @RequestParam("name") String name,
                                   @RequestParam("place") String place,
                                   @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
@@ -96,8 +103,8 @@ public class EventController {
       response.setStatus(HttpServletResponse.SC_OK);
       return event;
     } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      response.setHeader("gala-message", "Account with Id " + accountId.toString() + " was not found.");
+      GalaApiSpec.setResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND,
+              "Account with Id " + accountId.toString() + " was not found.");
     }
     return null;
   }
@@ -111,10 +118,10 @@ public class EventController {
    */
   @GetMapping("/{eventId}")
   @ApiResponses(value = {
-          @ApiResponse(code=200, message = "Event found successfully."),
-          @ApiResponse(code=404, message = "Event not found.")
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Event found successfully."),
+          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Event not found.")
   })
-  public Event retrieveEventById(@RequestParam("eventId") String eventId, HttpServletResponse response) {
+  public Event retrieveEventById(@PathVariable("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
 
     if (maybeEvent.isPresent()) {

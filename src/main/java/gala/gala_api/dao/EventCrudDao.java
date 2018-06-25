@@ -11,5 +11,5 @@ import java.util.List;
  * This repository conducts database actions for Event entities in the database.
  */
 public interface EventCrudDao extends CrudRepository<Event, String> {
-  List<Event> findAllByAccount(Account account);
+  List<Event> findAllByAccount(Account account); //TODO Inconsistency between find and findAll, see TicketCrudDao
 }
