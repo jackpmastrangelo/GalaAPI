@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +24,7 @@ public class Account implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @NotBlank
@@ -32,8 +34,10 @@ public class Account implements Serializable {
     private String lastName;
 
     @NotBlank
+    @JsonIgnore
     private String email;
 
+    @JsonIgnore
     @NotBlank
     private String password;
 
