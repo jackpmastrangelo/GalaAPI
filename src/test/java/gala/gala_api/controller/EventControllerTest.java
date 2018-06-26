@@ -35,9 +35,9 @@ public class EventControllerTest {
     HttpServletResponse httpServletResponse2 = new MockHttpServletResponse();
     HttpServletResponse httpServletResponse3 = new MockHttpServletResponse();
 
-    when(accountService.findAccountById(1L)).thenReturn(Optional.of(account1));
-    when(accountService.findAccountById(2L)).thenReturn(Optional.of(account2));
-    when(accountService.findAccountById(3L)).thenReturn(Optional.empty());
+    when(accountService.findById(1L)).thenReturn(Optional.of(account1));
+    when(accountService.findById(2L)).thenReturn(Optional.of(account2));
+    when(accountService.findById(3L)).thenReturn(Optional.empty());
     when(eventService.retrieveEventsByAccount(account1)).thenReturn(Arrays.asList(event1, event2));
     when(eventService.retrieveEventsByAccount(account2)).thenReturn(new ArrayList<>());
 
@@ -69,8 +69,8 @@ public class EventControllerTest {
     Date date = new Date();
 
 
-    when(accountService.findAccountById(1L)).thenReturn(Optional.of(account));
-    when(accountService.findAccountById(2L)).thenReturn(Optional.empty());
+    when(accountService.findById(1L)).thenReturn(Optional.of(account));
+    when(accountService.findById(2L)).thenReturn(Optional.empty());
     when(eventService.createEvent(account, "ACAIDA", "Acaida", date, 16))
             .thenReturn(event);
 

@@ -29,4 +29,4 @@
 .vscode/
 /src/main/resources/application.properties
 /bin/
-/src/test/resources/test.properties
+/src/test/resources/application.properties

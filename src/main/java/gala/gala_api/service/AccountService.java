@@ -34,7 +34,11 @@ public class AccountService {
     accountCrudDao.save(account);
   }
 
-  public Optional<Account> findAccountById(Long accountId) {
+  public Optional<Account> findById(Long accountId) {
     return accountCrudDao.findById(accountId);
+  }
+
+  public Optional<Account> findByEmail(String email) {
+    return accountCrudDao.findByEmail(email);
   }
 }

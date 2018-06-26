@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
@@ -31,9 +32,10 @@ public class AccountLoaderSecurityService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Account account = accountCrudDao.findByEmail(username);
+    Optional<Account> maybeAccount = accountCrudDao.findByEmail(username);
 
-    if (account != null) {
+    if (maybeAccount.isPresent()) {
+      Account account = maybeAccount.get();
       return new User(account.getEmail(), account.getPassword(), ROLES_FOR_ALL_USERS);
     } else {
       throw new UsernameNotFoundException("Could not find Account for email: " + username);
