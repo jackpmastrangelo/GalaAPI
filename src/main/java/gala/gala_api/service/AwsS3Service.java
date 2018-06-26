@@ -28,7 +28,7 @@ public class AwsS3Service {
    * @param key The actual key of the file within the bucket (This is essentially a filepath within the bucket.)
    *
    * @return The s3 file's contents as a String.
-   */ //TODO are there options other than String? Just curious
+   */
   public String getS3ObjectAsString(String bucket, String key) {
     S3Object emailTemplateObj = client.getObject(bucket, key);
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));

@@ -27,7 +27,7 @@ import java.util.Optional;
  * Controller for API endpoints relating to events,
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") //TODO what is this?
+@CrossOrigin(origins = "http://localhost:3000") //TODO Best way to configure CORS
 @RequestMapping("/events")
 public class EventController {
 
@@ -46,9 +46,9 @@ public class EventController {
   @GetMapping("/users")
   @ApiResponses(value = {
           @ApiResponse(code = HttpStatus.SC_OK, message = "Successfully retrieved user events."),
-          @ApiResponse(code = HttpStatus.SC_NO_CONTENT, message = "User had no events."), //TODO Why is no events invalid?
+          @ApiResponse(code = HttpStatus.SC_NO_CONTENT, message = "User had no events."),
           @ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "User could not be found.")
-  }) //TODO remove accountid from the request params
+  })
   public List<Event> retrieveUserEvents(@RequestParam("accountId") Long accountId, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findAccountById(accountId);
 
@@ -70,8 +70,6 @@ public class EventController {
     return null;
   }
 
-  //TODO validation on these properties resulting in different status code.
-  //TODO why /users?
   /**
    * Creates a new event for the given account with the given parameters.
    *
@@ -89,7 +87,7 @@ public class EventController {
           @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created"),
           @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Account not found")
   })
-  public Event createNewUserEvent(@RequestParam("accountId") Long accountId, //TODO don't pass this in, get it from the session
+  public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
                                   @RequestParam("name") String name,
                                   @RequestParam("place") String place,
                                   @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,

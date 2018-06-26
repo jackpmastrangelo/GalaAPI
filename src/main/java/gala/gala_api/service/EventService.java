@@ -3,9 +3,7 @@ package gala.gala_api.service;
 import gala.gala_api.dao.EventCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
-import gala.gala_api.entity.Ticket;
 
-import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +11,6 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Transactional
 @Service
@@ -40,7 +36,7 @@ public class EventService {
   }
 
   public List<Event> retrieveEventsByAccount(Account account) {
-    return eventCrudDao.findAllByAccount(account);
+    return eventCrudDao.findByAccount(account);
   }
 
   @Autowired

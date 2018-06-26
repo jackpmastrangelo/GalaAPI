@@ -8,6 +8,6 @@ public class GalaApiSpec {
     response.setStatus(statusCode);
     response.setHeader("gala-message", message);
   }
-  //TODO is setting gala-message necessary after api-response annotations on controller methods?
+  //TODO set response error message instead of using the header
 
 }

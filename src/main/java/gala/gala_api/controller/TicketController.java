@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/tickets")
 public class TicketController {
 
-  //TODO Decide on consistent Autowiring strategy
   private TicketService ticketService;
 
   private EventService eventService;
@@ -85,7 +84,7 @@ public class TicketController {
    */
   @PutMapping("/validate")
   @ResponseBody
-  @ApiResponses(value = { //TODO Do these actually do anything or are they just for Swagger?
+  @ApiResponses(value = {
           @ApiResponse(code=HttpStatus.SC_OK, message = "Ticket successfully validated."),
           @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Ticket could not be found."),
           @ApiResponse(code=HttpStatus.SC_NOT_ACCEPTABLE, message = "Ticket could not be validated."),
@@ -102,17 +101,13 @@ public class TicketController {
             ticketService.validateTicket(ticket);
             response.setStatus(HttpServletResponse.SC_OK);
             break;
-          case VOIDED:
-            GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE, "Ticket with Id "
-                    + ticketId + " was voided. Could not validate.");
-            break;
           case VALIDATED:
             GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE, "Ticket with Id "
                     + ticketId + " has already been validated. Could not validate.");
             break;
         }
       } else {
-        response.setStatus(HttpServletResponse.SC_CONFLICT); //TODO Right HTTP response?
+        response.setStatus(HttpServletResponse.SC_CONFLICT);
       }
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);

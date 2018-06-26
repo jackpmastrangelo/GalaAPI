@@ -47,20 +47,22 @@ public class EventServiceTest {
   }
 
   @Test
-  public void testRetriveEventsByAccount() {
+  public void testRetrieveEventsByAccount() {
     EventService eventService = new EventService();
     EventCrudDao eventCrudDao = mock(EventCrudDao.class);
 
     Account account = new Account();
     Event event1 = new Event();
+    event1.setId("ID1");
     Event event2 = new Event();
+    event2.setId("ID2");
 
-    when(eventCrudDao.findAllByAccount(account)).thenReturn(Arrays.asList(event1, event2));
+    when(eventCrudDao.findByAccount(account)).thenReturn(Arrays.asList(event1, event2));
     eventService.setEventCrudDao(eventCrudDao);
 
     List<Event> eventList = eventService.retrieveEventsByAccount(account);
-    assertEquals(event1, eventList.get(0)); //TODO event1.equals(event2) is true
-    assertEquals(event2, eventList.get(1));
     assertEquals(2, eventList.size());
+    assertEquals(event1, eventList.get(0));
+    assertEquals(event2, eventList.get(1));
   }
 }

@@ -84,18 +84,6 @@ public class TicketControllerTest {
     verify(ticketService, times(1)).validateTicket(ticket);
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
 
-    //Tests scenario where voided
-    Ticket ticket1 = new Ticket();
-    ticket1.setStatus(TicketStatus.VOIDED);
-    ticket1.setEvent(event);
-    HttpServletResponse httpServletResponse1 = new MockHttpServletResponse();
-    when(ticketService.retrieveTicket("ID1")).thenReturn(Optional.of(ticket1));
-    ticketController.validateTicket("ID1", "EID", httpServletResponse1);
-    verify(ticketService, times(0)).validateTicket(ticket1);
-    assertEquals(HttpServletResponse.SC_NOT_ACCEPTABLE, httpServletResponse1.getStatus());
-    assertEquals("Ticket with Id ID1 was voided. Could not validate.",
-            httpServletResponse1.getHeader("gala-message"));
-
     //Tests scenario where validated
     Ticket ticket2 = new Ticket();
     ticket2.setStatus(TicketStatus.VALIDATED);

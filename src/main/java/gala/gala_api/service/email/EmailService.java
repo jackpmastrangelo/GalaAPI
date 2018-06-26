@@ -15,8 +15,8 @@ public class EmailService {
   private AmazonSimpleEmailService amazonEmailService = AmazonSimpleEmailServiceClientBuilder
           .standard().withRegion(Regions.US_EAST_1).build();
 
-   /** //TODO javadoc should say method not class
-   * This class takes a single email address and an email and sends the email.
+   /**
+   * This method takes a single email address and an email and sends the email.
    *
    * @param toAddress The email address to send to.
    * @param request The AWS SendEmailRequest object for the email to be sent.

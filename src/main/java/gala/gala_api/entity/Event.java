@@ -41,18 +41,17 @@ public class Event implements Serializable {
   @NotBlank
   private String name;
 
-  //TODO Should this be @NotBlank?
+  @NotNull
   private String place;
 
-  //TODO Should this be @NotBlank?
+  @NotNull
   @Temporal(TemporalType.TIMESTAMP)
   private Date eventTime;
 
   @NotNull
   @ManyToOne
   @JoinColumn(name="account_id")
-  private Account account; //TODO this should maybe be made a list of events in the Account class
-  //TODO You'd have to JSON-ignore this anyway for security reasons
+  private Account account;
 
   @NotNull
   private Integer capacity;

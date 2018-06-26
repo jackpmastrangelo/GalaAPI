@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import gala.gala_api.entity.Event;
 import gala.gala_api.entity.Ticket;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +27,7 @@ public class TicketCrudDaoTest {
   @Autowired
   TicketCrudDao ticketCrudDao;
 
-  //TODO Can mockito help with faking all these values that need values.
+  //TODO Cleanup unnecessary setting.
   @Test
   public void testFindByEvent() {
     Account account = new Account();
@@ -37,10 +38,14 @@ public class TicketCrudDaoTest {
     Event event1 = new Event();
     event1.setAccount(account);
     event1.setName("e1");
+    event1.setPlace("No");
+    event1.setEventTime(new Date());
     event1.setCapacity(20);
     Event event2 = new Event();
     event2.setAccount(account);
     event2.setName("e2");
+    event2.setPlace("No");
+    event2.setEventTime(new Date());
     event2.setCapacity(25);
     Ticket ticket1 = new Ticket();
     ticket1.setEvent(event1);
