@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,8 @@ public class AccountsController {
 
   @PostMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public void createAccount(String email, String firstName, String lastName, String password) {
+  public void createAccount(@RequestParam String email, @RequestParam String firstName,
+                            @RequestParam String lastName, @RequestParam String password) {
     accountService.createAccount(email, firstName, lastName, password);
   }
 
