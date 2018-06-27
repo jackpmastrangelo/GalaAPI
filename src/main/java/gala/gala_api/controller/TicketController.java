@@ -26,11 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 public class TicketController {
 
   private TicketService ticketService;
-
   private EventService eventService;
-
   private EmailService emailService;
-
   private AwsS3Service awsS3Service;
 
   /**
@@ -90,7 +87,8 @@ public class TicketController {
           @ApiResponse(code=HttpStatus.SC_NOT_ACCEPTABLE, message = "Ticket could not be validated."),
           @ApiResponse(code=HttpStatus.SC_CONFLICT, message = "Ticket did not belong to the given event.")
   })
-  public void validateTicket(@RequestParam("ticketId") String ticketId, @RequestParam("eventId") String eventId, HttpServletResponse response) {
+  public void validateTicket(@RequestParam("ticketId") String ticketId,
+                             @RequestParam("eventId") String eventId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
     if (maybeTicket.isPresent()) {
       Ticket ticket = maybeTicket.get();

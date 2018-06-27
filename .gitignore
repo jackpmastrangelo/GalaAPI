@@ -27,6 +27,6 @@
 
 #Custom Added
 .vscode/
-/src/main/resources/application.properties
+/src/main/resources/*.properties
 /bin/
 /src/test/resources/application.properties
