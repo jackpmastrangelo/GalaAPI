@@ -41,12 +41,11 @@ public class EventControllerTest {
     when(eventService.retrieveEventsByAccount(account1)).thenReturn(Arrays.asList(event1, event2));
     when(eventService.retrieveEventsByAccount(account2)).thenReturn(new ArrayList<>());
 
-    eventController.setAccountService(accountService);
     eventController.setEventService(eventService);
 
-    List<Event> eventList1 = eventController.retrieveUserEvents(1L, httpServletResponse1);
-    List<Event> eventList2 = eventController.retrieveUserEvents(2L, httpServletResponse2);
-    List<Event> eventList3 = eventController.retrieveUserEvents(3L, httpServletResponse3);
+    List<Event> eventList1 = eventController.retrieveUserEvents(httpServletResponse1);
+    List<Event> eventList2 = eventController.retrieveUserEvents(httpServletResponse2);
+    List<Event> eventList3 = eventController.retrieveUserEvents(httpServletResponse3);
 
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse1.getStatus());
     assertEquals(2, eventList1.size());
@@ -74,12 +73,11 @@ public class EventControllerTest {
     when(eventService.createEvent(account, "ACAIDA", "Acaida", date, 16))
             .thenReturn(event);
 
-    eventController.setAccountService(accountService);
     eventController.setEventService(eventService);
 
-    Event result = eventController.createNewUserEvent(1L, "ACAIDA", "Acaida",
+    Event result = eventController.createNewUserEvent("ACAIDA", "Acaida",
             date, 16, httpServletResponse);
-    Event result1 = eventController.createNewUserEvent(2L, "ACAIDA", "Acaida",
+    Event result1 = eventController.createNewUserEvent("ACAIDA", "Acaida",
             date, 16, httpServletResponse1);
 
     assertEquals(event, result);

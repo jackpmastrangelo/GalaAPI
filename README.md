@@ -6,43 +6,26 @@ This application is a REST API that can be hit by various client applications(We
 ## API Specifications
 This section is for laying out our REST endpoints, their urls, their required parameters, their behaviors and what they return.
 
-`Note:` All endpoints will return 500 if something goes wrong and the action is unrecoverable.
+`Note:` All endpoints will return 500 if something goes wrong and the action is unrecoverable. All endpoints will also return 400 Bad Request if required parameters were not provided.
 
 `Note:` All endpoints marked as (Secure) require being logged in to access, and therefore should accept the authentication
 key as a String in the header as well. These will return a 403 Forbidden if unauthenticated. For responses other than 200 you should add a header "gala-message" that gives the client more information.
 
-### Login
-`URL:` /login `HTTP Method`: POST
-
-`Parameters:` username : String, password : String
-
-`Expected behavior:` Authenticate user credentials, and determine whether they have an account.
-
-`Responses:` 
-
-| Response Code | Behaviour |
-| --- | --- |
-| 200 | Authentication successful, return `key` as String for authenticating client |
-| 401 | Authentication unsuccessful, return `message` as String with the reason why. |
-
 ### Get User Events (Secure)
-`URL:` /events/user/{userId} (as Long) `HTTP Method`: GET
+`URL:` /events/users `HTTP Method`: GET
 
 `Parameters:` N/A
 
-`Expected behavior:` For the given userId, which should be the same as the currently authenticated user, return a JSONArray containing all events for that user as JSONObjects.
+`Expected behavior:` For the currently authenticated user, return a JSONArray containing all events for that user as JSONObjects.
 
 `Responses:` 
 
 | Response Code | Behaviour |
 | --- | --- |
-| 200 | User has events, return a JSONArray containing all events for that user as JSONObjects. |
-| 204 | User was found, has no events yet.|
-| 403 | Wrong user was logged in, can only view your own events. |
-| 404 | User was not found, if they were authenticated and able to reach this thats probably an issue.|
+| 200 | User has events, return a JSONArray containing all events for that user as JSONObjects.|
 
 ### Create New Event (Secure)
-`URL:` /events/user/{userId} (as Long) `HTTP Method`: POST
+`URL:` /events/users `HTTP Method`: POST
 
 `Parameters:` name : String, place : String, eventTime: Date, capacity : Integer
 
@@ -53,8 +36,6 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 | Response Code | Behaviour |
 | --- | --- |
 | 200 | Event creation was successful, return Event. |
-| 403 | Wrong user was logged in, can only create events for your own account. |
-| 404 | User was not found, if they were authenticated and able to reach this thats probably an issue.|
 
 ### Get one event
 `URL:` /events/{eventId} (as String) `HTTP Method`: GET
@@ -98,6 +79,6 @@ the given email address.
 | Response Code | Behaviour |
 | --- | --- |
 | 200 | Ticket was validated successfully |
-| 401 | Ticket is not associated with given event |
 | 404 | Ticket not found |
 | 406 | Ticket was found but unable to be validated for whatever reason, return `message` as String |
+| 409 | Ticket is not associated with given event |
