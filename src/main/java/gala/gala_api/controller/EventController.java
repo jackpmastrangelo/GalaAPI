@@ -90,6 +90,7 @@ public class EventController {
   public Event createNewUserEvent(@RequestParam("accountId") Long accountId,
                                   @RequestParam("name") String name,
                                   @RequestParam("place") String place,
+                                  //TODO How pass in dates well?
                                   @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
                                   @RequestParam("capacity") int capacity, HttpServletResponse response) {
     Optional<Account> maybeAccount = accountService.findById(accountId);

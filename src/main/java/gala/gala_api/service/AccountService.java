@@ -15,20 +15,14 @@ import java.util.Optional;
 @Transactional
 public class AccountService {
 
-  private final AccountCrudDao accountCrudDao;
-  private final PasswordEncoder passwordEncoder;
+  private AccountCrudDao accountCrudDao;
+  private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  public AccountService(AccountCrudDao accountCrudDao, PasswordEncoder passwordEncoder) {
-    this.accountCrudDao = accountCrudDao;
-    this.passwordEncoder = passwordEncoder;
-  }
-
-  public void createAccount(String email, String firstName, String lastName, String password) {
+  public void createAccount(String firstName, String lastName, String email, String password) {
     Account account = new Account();
-    account.setEmail(email);
     account.setFirstName(firstName);
     account.setLastName(lastName);
+    account.setEmail(email);
     account.setPassword(passwordEncoder.encode(password));
 
     accountCrudDao.save(account);
@@ -40,5 +34,15 @@ public class AccountService {
 
   public Optional<Account> findByEmail(String email) {
     return accountCrudDao.findByEmail(email);
+  }
+
+  @Autowired
+  public void setAccountCrudDao(AccountCrudDao accountCrudDao) {
+    this.accountCrudDao = accountCrudDao;
+  }
+
+  @Autowired
+  public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+    this.passwordEncoder = passwordEncoder;
   }
 }

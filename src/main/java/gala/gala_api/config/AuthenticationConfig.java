@@ -13,13 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 
-  private final UserDetailsService userDetailsService;
-
-  @Autowired
-  public AuthenticationConfig(@Qualifier("accountLoaderSecurityService")
-                                        UserDetailsService userDetailsService) {
-    this.userDetailsService = userDetailsService;
-  }
+  private UserDetailsService userDetailsService;
 
   @Override
   public void init(AuthenticationManagerBuilder auth) throws Exception {
@@ -29,5 +23,11 @@ public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter 
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Autowired
+  @Qualifier("accountLoaderSecurityService")
+  public void setUserDetailsService(UserDetailsService userDetailsService) {
+    this.userDetailsService = userDetailsService;
   }
 }

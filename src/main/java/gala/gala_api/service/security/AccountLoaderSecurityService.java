@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
+import gala.gala_api.service.AccountService;
 
 @Component
 @Qualifier("accountLoaderService")
@@ -23,16 +24,11 @@ public class AccountLoaderSecurityService implements UserDetailsService {
   private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS =
           AuthorityUtils.createAuthorityList("USER");
 
-  private final AccountCrudDao accountCrudDao;
-
-  @Autowired
-  public AccountLoaderSecurityService(AccountCrudDao accountCrudDao) {
-    this.accountCrudDao = accountCrudDao;
-  }
+  private AccountService accountService;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<Account> maybeAccount = accountCrudDao.findByEmail(username);
+    Optional<Account> maybeAccount = accountService.findByEmail(username);
 
     if (maybeAccount.isPresent()) {
       Account account = maybeAccount.get();
@@ -40,5 +36,10 @@ public class AccountLoaderSecurityService implements UserDetailsService {
     } else {
       throw new UsernameNotFoundException("Could not find Account for email: " + username);
     }
+  }
+
+  @Autowired
+  public void setAccountService(AccountService accountService) {
+    this.accountService = accountService;
   }
 }
