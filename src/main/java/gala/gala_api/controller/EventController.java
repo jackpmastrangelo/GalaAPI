@@ -29,8 +29,6 @@ public class EventController {
 
   private EventService eventService;
 
-  private AccountService accountService;
-
   /**
    * This endpoint returns a JSONArray of all the events from the associated user. Authenticated user must be same as
    * user who's events are being returned.
@@ -106,10 +104,5 @@ public class EventController {
   @Autowired
   public void setEventService(EventService eventService) {
     this.eventService = eventService;
-  }
-
-  @Autowired
-  public void setAccountService(AccountService accountService) {
-    this.accountService = accountService;
   }
 }

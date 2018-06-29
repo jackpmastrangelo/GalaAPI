@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 public class AccountServiceTest {
 
-  private static final Long ACCOUNT_ID = 1L;
+  private static final String ACCOUNT_ID = "1";
 
   private static final String FIRST_NAME = "alice";
   private static final String LAST_NAME = "eventGoer";

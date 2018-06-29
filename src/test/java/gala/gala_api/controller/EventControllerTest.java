@@ -6,6 +6,8 @@ import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -23,53 +25,41 @@ public class EventControllerTest {
   @Test
   public void testRetrieveUserEvents() {
     EventController eventController = new EventController();
-    AccountService accountService = mock(AccountService.class);
     EventService eventService = mock(EventService.class);
 
-    Account account1 = new Account();
-    Account account2 = new Account();
+    Account account = new Account();
+    account.setId("A1");
+    Event event = new Event();
     Event event1 = new Event();
-    Event event2 = new Event();
 
-    HttpServletResponse httpServletResponse1 = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse2 = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse3 = new MockHttpServletResponse();
+    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(account, null);
+    SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
-    when(accountService.findById(1L)).thenReturn(Optional.of(account1));
-    when(accountService.findById(2L)).thenReturn(Optional.of(account2));
-    when(accountService.findById(3L)).thenReturn(Optional.empty());
-    when(eventService.retrieveEventsByAccount(account1)).thenReturn(Arrays.asList(event1, event2));
-    when(eventService.retrieveEventsByAccount(account2)).thenReturn(new ArrayList<>());
+    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
 
+    when(eventService.retrieveEventsByAccount(account)).thenReturn(Arrays.asList(event, event1));
     eventController.setEventService(eventService);
 
-    List<Event> eventList1 = eventController.retrieveUserEvents(httpServletResponse1);
-    List<Event> eventList2 = eventController.retrieveUserEvents(httpServletResponse2);
-    List<Event> eventList3 = eventController.retrieveUserEvents(httpServletResponse3);
 
-    assertEquals(HttpServletResponse.SC_OK, httpServletResponse1.getStatus());
+    List<Event> eventList1 = eventController.retrieveUserEvents(httpServletResponse);
+
+    assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
     assertEquals(2, eventList1.size());
-    assertEquals(HttpServletResponse.SC_NO_CONTENT, httpServletResponse2.getStatus());
-    assertEquals(null, eventList2);
-    assertEquals(HttpServletResponse.SC_NOT_FOUND, httpServletResponse3.getStatus());
-    assertEquals(null, eventList3);
   }
 
   @Test
   public void testCreateNewUserEvent() {
     EventController eventController = new EventController();
-    AccountService accountService = mock(AccountService.class);
     EventService eventService = mock(EventService.class);
 
     Account account = new Account();
     Event event = new Event();
     HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse1 = new MockHttpServletResponse();
     Date date = new Date();
 
+    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(account, null);
+    SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
-    when(accountService.findById(1L)).thenReturn(Optional.of(account));
-    when(accountService.findById(2L)).thenReturn(Optional.empty());
     when(eventService.createEvent(account, "ACAIDA", "Acaida", date, 16))
             .thenReturn(event);
 
@@ -77,13 +67,9 @@ public class EventControllerTest {
 
     Event result = eventController.createNewUserEvent("ACAIDA", "Acaida",
             date, 16, httpServletResponse);
-    Event result1 = eventController.createNewUserEvent("ACAIDA", "Acaida",
-            date, 16, httpServletResponse1);
 
     assertEquals(event, result);
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
-    assertEquals(null, result1);
-    assertEquals(HttpServletResponse.SC_NOT_FOUND, httpServletResponse1.getStatus());
   }
 
   @Test

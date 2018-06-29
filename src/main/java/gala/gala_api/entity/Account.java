@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,9 +25,11 @@ public class Account implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
+  @Column(unique = true)
   @JsonIgnore
-  private Long id;
+  private String id;
 
   @NotBlank
   private String firstName;
@@ -50,11 +53,11 @@ public class Account implements Serializable {
   @UpdateTimestamp
   private Date updatedAt;
 
-  public Long getId() {
+  public String getId() {
       return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
       this.id = id;
   }
 

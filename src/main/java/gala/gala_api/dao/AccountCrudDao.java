@@ -12,6 +12,6 @@ import gala.gala_api.entity.Account;
  * Spring Data provides the implementation. CAREFUL when altering the method
  * names and signatures.
  */
-public interface AccountCrudDao extends CrudRepository<Account, Long> {
+public interface AccountCrudDao extends CrudRepository<Account, String> {
   Optional<Account> findByEmail(String email);
 }

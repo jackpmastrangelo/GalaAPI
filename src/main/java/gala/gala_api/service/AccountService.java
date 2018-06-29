@@ -28,7 +28,7 @@ public class AccountService {
     accountCrudDao.save(account);
   }
 
-  public Optional<Account> findById(Long accountId) {
+  public Optional<Account> findById(String accountId) {
     return accountCrudDao.findById(accountId);
   }
 
