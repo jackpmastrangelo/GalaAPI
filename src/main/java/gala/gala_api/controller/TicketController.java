@@ -1,6 +1,5 @@
 package gala.gala_api.controller;
 
-import gala.gala_api.service.AwsS3Service;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
@@ -14,7 +13,6 @@ import gala.gala_api.entity.Ticket;
 import gala.gala_api.service.EventService;
 import gala.gala_api.service.TicketService;
 import gala.gala_api.service.email.EmailService;
-import gala.gala_api.service.email.SendTicketEmail;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +26,6 @@ public class TicketController {
   private TicketService ticketService;
   private EventService eventService;
   private EmailService emailService;
-  private AwsS3Service awsS3Service;
 
   /**
    * Creates a ticket for the given event, generates a QR Code with the given ticketId, and sends
@@ -54,9 +51,7 @@ public class TicketController {
 
       if (ticketService.areTicketsRemaining(event)) {
         Ticket ticket = ticketService.createTicket(event, email);
-
         ticketService.generateAndUploadQRCode(ticket.getId());
-        emailService.sendEmail(email, new SendTicketEmail(event.getName(), ticket.getId(), awsS3Service));
 
         GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_OK,"Ticket successfully added.");
         return ticket;
@@ -70,6 +65,19 @@ public class TicketController {
     }
 
     return null;
+  }
+
+  @PostMapping("/sendTicketCreationEmail")
+  @ResponseBody
+  public void sendTicketEmail(@RequestParam String ticketId, HttpServletResponse response) {
+    Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
+
+    if (maybeTicket.isPresent()) {
+      emailService.sendTicketEmail(maybeTicket.get());
+    } else {
+      GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_BAD_REQUEST,
+              "Ticket with id " + ticketId + "cannot be found.");
+    }
   }
 
   /**
@@ -129,10 +137,5 @@ public class TicketController {
   @Autowired
   public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
-  }
-
-  @Autowired
-  public void setAwsS3Service(AwsS3Service awsS3Service) {
-    this.awsS3Service = awsS3Service;
   }
 }

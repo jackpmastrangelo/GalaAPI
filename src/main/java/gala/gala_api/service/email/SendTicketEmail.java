@@ -11,7 +11,7 @@ public class SendTicketEmail extends AbstractEmail {
   /**
    * Constructs a new SendTicketEmail.
    * @param eventName The name of the event that the ticket was generated for.
-   */ //TODO Should not take in an AwsS3Service
+   */
   public SendTicketEmail(String eventName, String qrCodeNumber, AwsS3Service awsS3Service) {
     String subject = "Your ticket for " + eventName + " has arrived!";
     String textBody = "Your email does not support HTML currently, go to galatix.io to get your ticket.";

@@ -1,10 +1,12 @@
 package gala.gala_api.service.email;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import gala.gala_api.entity.Ticket;
 
 /**
  * This service exists to interface with AWS SES (Simple Email Service).
@@ -12,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-  private AmazonSimpleEmailService amazonEmailService = AmazonSimpleEmailServiceClientBuilder
-          .standard().withRegion(Regions.US_EAST_1).build();
+  private AmazonSimpleEmailService amazonEmailService;
+  private TicketEmailRequestBuilder ticketEmailRequestBuilder;
 
    /**
    * This method takes a single email address and an email and sends the email.
@@ -26,5 +28,18 @@ public class EmailService {
     amazonEmailService.sendEmail(request);
   }
 
-  //TODO method signature, I think it would be a good idea to isolate email-sending more
+  public void sendTicketEmail(Ticket ticket) {
+    SendEmailRequest emailRequest = ticketEmailRequestBuilder.buildTicketEmailRequest(ticket);
+    amazonEmailService.sendEmail(emailRequest);
+  }
+
+  @Autowired
+  public void setAmazonEmailService(AmazonSimpleEmailService amazonEmailService) {
+    this.amazonEmailService = amazonEmailService;
+  }
+
+  @Autowired
+  public void setTicketEmailRequestBuilder(TicketEmailRequestBuilder builder) {
+    this.ticketEmailRequestBuilder = builder;
+  }
 }
