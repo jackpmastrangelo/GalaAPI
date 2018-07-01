@@ -10,10 +10,10 @@ public class GalaApiApplication {
 
 	public static void main(String[] args) {
 
-	  //TODO Remove this and figure out config class
-    Properties props = System.getProperties();
-    props.setProperty("aws.accessKeyId", "AKIAJLB647EVC4U7H3IQ");
-    props.setProperty("aws.secretKey", "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");
+	  Properties props = System.getProperties();
+
+	  props.setProperty("aws.accessKeyId", "AKIAI5IBV6L36SK75GRQ");
+	  props.setProperty("aws.secretKey", "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");
 
 	  SpringApplication.run(GalaApiApplication.class, args);
 	}

@@ -1,5 +1,6 @@
 package gala.gala_api.service.security;
 
+import gala.gala_api.data_model.AccountUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +19,6 @@ import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 
 @Component
-@Qualifier("accountLoaderService")
 public class AccountLoaderSecurityService implements UserDetailsService {
 
   private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS =
@@ -32,7 +32,7 @@ public class AccountLoaderSecurityService implements UserDetailsService {
 
     if (maybeAccount.isPresent()) {
       Account account = maybeAccount.get();
-      return new User(account.getEmail(), account.getPassword(), ROLES_FOR_ALL_USERS);
+      return new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
     } else {
       throw new UsernameNotFoundException("Could not find Account for email: " + username);
     }

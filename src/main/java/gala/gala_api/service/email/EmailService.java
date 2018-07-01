@@ -17,17 +17,6 @@ public class EmailService {
   private EmailRequestFactoryService emailRequestFactoryService;
   private AmazonSimpleEmailService amazonEmailService;
 
-   /**
-   * This method takes a single email address and an email and sends the email.
-   *
-   * @param toAddress The email address to send to.
-   * @param request The AWS SendEmailRequest object for the email to be sent.
-   */
-  public void sendEmail(String toAddress, SendEmailRequest request) {
-    request.withDestination(new Destination().withToAddresses(toAddress));
-    amazonEmailService.sendEmail(request);
-  }
-
   public void sendTicketEmail(Ticket ticket) {
     SendEmailRequest emailRequest = emailRequestFactoryService.buildTicketEmailRequest(ticket);
     amazonEmailService.sendEmail(emailRequest);

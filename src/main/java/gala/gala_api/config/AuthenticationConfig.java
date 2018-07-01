@@ -1,5 +1,6 @@
 package gala.gala_api.config;
 
+import gala.gala_api.service.security.AccountLoaderSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 
-  private UserDetailsService userDetailsService;
+  private AccountLoaderSecurityService accountLoaderSecurityService;
 
   @Override
   public void init(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService);
+    auth.userDetailsService(accountLoaderSecurityService);
   }
 
   @Bean
@@ -26,8 +27,7 @@ public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter 
   }
 
   @Autowired
-  @Qualifier("accountLoaderSecurityService")
-  public void setUserDetailsService(UserDetailsService userDetailsService) {
-    this.userDetailsService = userDetailsService;
+  public void setUserDetailsService(AccountLoaderSecurityService accountLoaderSecurityService) {
+    this.accountLoaderSecurityService = accountLoaderSecurityService;
   }
 }
