@@ -1,12 +1,16 @@
 package gala.gala_api.controller;
 
+import gala.gala_api.data_model.AccountUserDetails;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
 import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
+import gala.gala_api.service.security.AccountLoaderSecurityService;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +31,17 @@ public class EventControllerTest {
     EventController eventController = new EventController();
     EventService eventService = mock(EventService.class);
 
+    List<GrantedAuthority> ROLES_FOR_ALL_USERS = AuthorityUtils.createAuthorityList("USER");
     Account account = new Account();
     account.setId("A1");
+    account.setEmail("E");
+    account.setPassword("P");
+    AccountUserDetails accountUserDetails = new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
+
     Event event = new Event();
     Event event1 = new Event();
 
-    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(account, null);
+    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
     SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
     HttpServletResponse httpServletResponse = new MockHttpServletResponse();
@@ -52,12 +61,18 @@ public class EventControllerTest {
     EventController eventController = new EventController();
     EventService eventService = mock(EventService.class);
 
+    List<GrantedAuthority> ROLES_FOR_ALL_USERS = AuthorityUtils.createAuthorityList("USER");
     Account account = new Account();
+    account.setId("A1");
+    account.setEmail("E");
+    account.setPassword("P");
+    AccountUserDetails accountUserDetails = new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
+
     Event event = new Event();
     HttpServletResponse httpServletResponse = new MockHttpServletResponse();
     Date date = new Date();
 
-    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(account, null);
+    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
     SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
     when(eventService.createEvent(account, "ACAIDA", "Acaida", date, 16))

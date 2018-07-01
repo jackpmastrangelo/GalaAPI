@@ -1,5 +1,6 @@
 package gala.gala_api.controller;
 
+import gala.gala_api.data_model.AccountUserDetails;
 import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ public class EventController {
 
   private EventService eventService;
 
+  private AccountService accountService;
+
   /**
    * This endpoint returns a JSONArray of all the events from the associated user. Authenticated user must be same as
    * user who's events are being returned.
@@ -43,7 +47,7 @@ public class EventController {
   })
   public List<Event> retrieveUserEvents(HttpServletResponse response) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Account account = (Account)authentication.getPrincipal();
+    Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
 
     response.setStatus(HttpServletResponse.SC_OK);
     return eventService.retrieveEventsByAccount(account);
@@ -70,7 +74,7 @@ public class EventController {
                                   @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
                                   @RequestParam("capacity") int capacity, HttpServletResponse response) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Account account = (Account) authentication.getPrincipal();
+    Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
     Event event = eventService.createEvent(account, name, place, eventTime, capacity);
 
     response.setStatus(HttpServletResponse.SC_OK);
@@ -104,5 +108,10 @@ public class EventController {
   @Autowired
   public void setEventService(EventService eventService) {
     this.eventService = eventService;
+  }
+
+  @Autowired
+  public void setAccountService(AccountService accountService) {
+    this.accountService = accountService;
   }
 }

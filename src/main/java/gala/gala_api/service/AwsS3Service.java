@@ -19,17 +19,16 @@ import java.io.InputStreamReader;
 @Service
 public class AwsS3Service {
 
-  private AmazonS3 client = AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build();
-
   /**
    * Gets the given s3 file and returns its contents as a large string. Currently does not preserver newlines.
    *
    * @param bucket The AWS bucket where the file is stored.
-   * @param key The actual key of the file within the bucket (This is essentially a filepath within the bucket.)
+   * @param key The actual key of the file within the bucket (This is essentially a filepath within the bucket.)s
    *
    * @return The s3 file's contents as a String.
    */
   public String getS3ObjectAsString(String bucket, String key) {
+    AmazonS3 client = this.getS3Client();
     S3Object emailTemplateObj = client.getObject(bucket, key);
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));
 
@@ -47,8 +46,13 @@ public class AwsS3Service {
   }
 
   public void putS3ObjectFromByteArray(byte[] s3Obj, String bucket, String key) {
+    AmazonS3 client = this.getS3Client();
     ByteArrayInputStream inputStream = new ByteArrayInputStream(s3Obj);
     PutObjectRequest request = new PutObjectRequest(bucket, key, inputStream, new ObjectMetadata());
     client.putObject(request);
+  }
+
+  private AmazonS3 getS3Client() {
+    return AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build();
   }
 }
