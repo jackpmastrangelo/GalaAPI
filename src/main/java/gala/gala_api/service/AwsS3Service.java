@@ -46,8 +46,7 @@ public class AwsS3Service {
    * @return The s3 file's contents as a String.
    */
   public String getS3ObjectAsString(String bucket, String key) {
-    AmazonS3 client = this.amazonClient;
-    S3Object emailTemplateObj = client.getObject(bucket, key);
+    S3Object emailTemplateObj = this.amazonClient.getObject(bucket, key);
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));
 
     StringBuilder result = new StringBuilder();
@@ -64,10 +63,9 @@ public class AwsS3Service {
   }
 
   public void putS3ObjectFromByteArray(byte[] s3Obj, String bucket, String key) {
-    AmazonS3 client = this.amazonClient;
     ByteArrayInputStream inputStream = new ByteArrayInputStream(s3Obj);
     PutObjectRequest request = new PutObjectRequest(bucket, key, inputStream, new ObjectMetadata());
-    client.putObject(request);
+    this.amazonClient.putObject(request);
   }
 
   @PostConstruct
