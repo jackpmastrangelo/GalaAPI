@@ -28,11 +28,12 @@ public class AccountController {
                             @RequestParam String email, @RequestParam String password,
                             HttpServletResponse response) {
     if (isValidEmailRegex(email)) {
-      Optional<Account> maybePreviousAccountWithEmail = accountService.findByEmail(email);
-      if (!maybePreviousAccountWithEmail.isPresent()) {
-        accountService.createAccount(firstName, lastName, email, password);
-      } else {
+      Optional<Account> existingAccountWithEmail = accountService.findByEmail(email);
+
+      if (existingAccountWithEmail.isPresent()) {
         response.setStatus(HttpServletResponse.SC_CONFLICT);
+      } else {
+        accountService.createAccount(firstName, lastName, email, password);
       }
     } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

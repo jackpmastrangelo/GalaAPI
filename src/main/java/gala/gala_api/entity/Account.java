@@ -37,12 +37,13 @@ public class Account implements Serializable {
   @NotBlank
   private String lastName;
 
+  @Email
   @NotBlank
   @JsonIgnore
   private String email;
 
-  @JsonIgnore
   @NotBlank
+  @JsonIgnore
   private String password;
 
   @Temporal(TemporalType.TIMESTAMP)

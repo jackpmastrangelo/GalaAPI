@@ -14,8 +14,8 @@ import gala.gala_api.entity.Ticket;
 @Service
 public class EmailService {
 
+  private EmailRequestFactoryService emailRequestFactoryService;
   private AmazonSimpleEmailService amazonEmailService;
-  private TicketEmailRequestBuilder ticketEmailRequestBuilder;
 
    /**
    * This method takes a single email address and an email and sends the email.
@@ -29,17 +29,17 @@ public class EmailService {
   }
 
   public void sendTicketEmail(Ticket ticket) {
-    SendEmailRequest emailRequest = ticketEmailRequestBuilder.buildTicketEmailRequest(ticket);
+    SendEmailRequest emailRequest = emailRequestFactoryService.buildTicketEmailRequest(ticket);
     amazonEmailService.sendEmail(emailRequest);
+  }
+
+  @Autowired
+  public void setEmailRequestFactoryService(EmailRequestFactoryService emailRequestFactoryService) {
+    this.emailRequestFactoryService = emailRequestFactoryService;
   }
 
   @Autowired
   public void setAmazonEmailService(AmazonSimpleEmailService amazonEmailService) {
     this.amazonEmailService = amazonEmailService;
-  }
-
-  @Autowired
-  public void setTicketEmailRequestBuilder(TicketEmailRequestBuilder builder) {
-    this.ticketEmailRequestBuilder = builder;
   }
 }

@@ -1,5 +1,6 @@
 package gala.gala_api.controller;
 
+import gala.gala_api.service.AwsS3Service;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
@@ -26,6 +27,7 @@ public class TicketController {
   private TicketService ticketService;
   private EventService eventService;
   private EmailService emailService;
+  private AwsS3Service awsS3Service;
 
   /**
    * Creates a ticket for the given event, generates a QR Code with the given ticketId, and sends
@@ -51,7 +53,7 @@ public class TicketController {
 
       if (ticketService.areTicketsRemaining(event)) {
         Ticket ticket = ticketService.createTicket(event, email);
-        ticketService.generateAndUploadQRCode(ticket.getId());
+        awsS3Service.generateAndUploadQrCodeTicket(ticket.getId());
 
         GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_OK,"Ticket successfully added.");
         return ticket;
@@ -137,5 +139,10 @@ public class TicketController {
   @Autowired
   public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
+  }
+
+  @Autowired
+  public void setAwsS3Service(AwsS3Service awsS3Service) {
+    this.awsS3Service = awsS3Service;
   }
 }

@@ -7,9 +7,8 @@ import gala.gala_api.service.AwsS3Service;
 import gala.gala_api.service.EventService;
 import gala.gala_api.service.TicketService;
 import gala.gala_api.service.email.EmailService;
-import gala.gala_api.service.email.SendTicketEmail;
+
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class TicketControllerTest {
@@ -46,7 +44,7 @@ public class TicketControllerTest {
     when(ticketService.areTicketsRemaining(event)).thenReturn(true);
     when(ticketService.areTicketsRemaining(event1)).thenReturn(false);
     when(ticketService.createTicket(event, "j@j.com")).thenReturn(ticket);
-    when(awsS3Service.getS3ObjectAsString("gala-internal-filestore", "emails/sendEmailTemplate.html"))
+    when(awsS3Service.fetchS3ObjectAsString("gala-internal-filestore", "emails/sendEmailTemplate.html"))
             .thenReturn("-EVENT_NAME- || -QR_CODE_NUMBER- ");
 
     ticketController.setTicketService(ticketService);
