@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -19,6 +20,8 @@ import java.io.InputStreamReader;
 @Service
 public class AwsS3Service {
 
+  private AmazonClient amazonClient;
+
   /**
    * Gets the given s3 file and returns its contents as a large string. Currently does not preserver newlines.
    *
@@ -28,7 +31,7 @@ public class AwsS3Service {
    * @return The s3 file's contents as a String.
    */
   public String getS3ObjectAsString(String bucket, String key) {
-    AmazonS3 client = this.getS3Client();
+    AmazonS3 client = this.amazonClient.getAmazonClient();
     S3Object emailTemplateObj = client.getObject(bucket, key);
     BufferedReader s3Reader = new BufferedReader(new InputStreamReader(emailTemplateObj.getObjectContent()));
 
@@ -46,13 +49,14 @@ public class AwsS3Service {
   }
 
   public void putS3ObjectFromByteArray(byte[] s3Obj, String bucket, String key) {
-    AmazonS3 client = this.getS3Client();
+    AmazonS3 client = this.amazonClient.getAmazonClient();
     ByteArrayInputStream inputStream = new ByteArrayInputStream(s3Obj);
     PutObjectRequest request = new PutObjectRequest(bucket, key, inputStream, new ObjectMetadata());
     client.putObject(request);
   }
 
-  private AmazonS3 getS3Client() {
-    return AmazonS3Client.builder().withRegion(Regions.US_EAST_1).build();
+  @Autowired
+  public void setAmazonClient(AmazonClient amazonClient) {
+    this.amazonClient = amazonClient;
   }
 }
