@@ -29,14 +29,6 @@ public class AwsS3Service {
 
   private AmazonS3 amazonClient;
 
-  @Value("${amazonProperties.accessKey}")
-  private String accessKey;
-
-  @Value("${amazonProperties.secretKey}")
-  private String secretKey;
-
-  private final Regions region = Regions.US_EAST_1;
-
   /**
    * Gets the given s3 file and returns its contents as a large string. Currently does not preserver newlines.
    *
@@ -68,15 +60,7 @@ public class AwsS3Service {
     this.amazonClient.putObject(request);
   }
 
-  @PostConstruct
-  private void initClient() {
-    AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-    AWSCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
-    this.amazonClient = AmazonS3ClientBuilder.standard().withCredentials(provider)
-            .withRegion(region).build();
-  }
-
-  //For testing purposes.
+  @Autowired
   public void setAmazonClient(AmazonS3 amazonClient) {
     this.amazonClient = amazonClient;
   }
