@@ -21,92 +21,169 @@ import static org.mockito.Mockito.*;
 
 public class TicketControllerTest {
 
+  private static final String EVENT_ID = "eventid";
+  private static final String TICKET_ID = "ticketid";
+  private static final String EMAIL = "alice@example.com";
+
   @Test
-  public void testRequestTicket() throws IOException {
-    TicketController ticketController = new TicketController();
-    TicketService ticketService = mock(TicketService.class);
-    EventService eventService = mock(EventService.class);
-    EmailService emailService = mock(EmailService.class);
-    AwsS3Service awsS3Service = mock(AwsS3Service.class);
+  public void testRequestTicket_ValidEventWithTicketsRemaining() {
+    Event expectedEvent = buildEvent(EVENT_ID);
 
-    Event event = new Event();
-    event.setName("Ree");
-    Event event1 = new Event();
-    Ticket ticket = new Ticket();
-    ticket.setId("TID");
-    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse1 = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse2 = new MockHttpServletResponse();
+    EventService mockEventService = mock(EventService.class);
+    when(mockEventService.findEvent(EVENT_ID)).thenReturn(Optional.of(expectedEvent));
 
-    when(eventService.findEvent("ID")).thenReturn(Optional.of(event));
-    when(eventService.findEvent("ID1")).thenReturn(Optional.of(event1));
-    when(eventService.findEvent("ID2")).thenReturn(Optional.empty());
-    when(ticketService.areTicketsRemaining(event)).thenReturn(true);
-    when(ticketService.areTicketsRemaining(event1)).thenReturn(false);
-    when(ticketService.createTicket(event, "j@j.com")).thenReturn(ticket);
-    when(awsS3Service.fetchS3ObjectAsString("gala-internal-filestore", "emails/sendEmailTemplate.html"))
-            .thenReturn("-EVENT_NAME- || -QR_CODE_NUMBER- ");
+    Ticket expectedTicket = buildTicket(TICKET_ID, TicketStatus.ACTIVE, expectedEvent);
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.areTicketsRemaining(expectedEvent)).thenReturn(true);
+    when(mockTicketService.createTicket(expectedEvent, EMAIL)).thenReturn(expectedTicket);
 
-    ticketController.setTicketService(ticketService);
-    ticketController.setEventService(eventService);
-    ticketController.setEmailService(emailService);
-    ticketController.setAwsS3Service(awsS3Service);
+    AwsS3Service mockAwsS3Service = mock(AwsS3Service.class);
+    EmailService mockEmailService = mock(EmailService.class);
 
-    Ticket result = ticketController.requestTicket("ID", "j@j.com", httpServletResponse);
-    Ticket result1 = ticketController.requestTicket("ID1", "j1@j.com", httpServletResponse1);
-    Ticket result2 = ticketController.requestTicket("ID2", "j2@j.com", httpServletResponse2);
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
 
-    assertEquals(ticket, result);
-    assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
-    assertEquals(null, result1);
-    assertEquals(HttpServletResponse.SC_CONFLICT, httpServletResponse1.getStatus());
-    assertEquals(null, result2);
-    assertEquals(HttpServletResponse.SC_NOT_FOUND, httpServletResponse2.getStatus());
+    TicketController controller = buildTicketController(mockEventService, mockTicketService,
+            mockAwsS3Service, mockEmailService);
+    Ticket actualTicket = controller.requestTicket(EVENT_ID, EMAIL, mockResponse);
+
+    assertEquals(expectedTicket, actualTicket);
+    assertEquals(HttpServletResponse.SC_OK, mockResponse.getStatus());
+
+    verify(mockAwsS3Service).generateAndUploadQrCodeTicket(TICKET_ID);
+    verify(mockEmailService).sendTicketEmail(expectedTicket);
   }
 
   @Test
-  public void testValidateTicket() {
-    TicketController ticketController = new TicketController();
-    TicketService ticketService = mock(TicketService.class);
-    ticketController.setTicketService(ticketService);
+  public void testRequestTicket_EventIsAtCapacity() {
+    Event fullEvent = buildEvent(EVENT_ID);
 
-    //Tests successful scenario
-    Ticket ticket = new Ticket();
-    ticket.setStatus(TicketStatus.ACTIVE);
+    EventService mockEventService = mock(EventService.class);
+    when(mockEventService.findEvent(EVENT_ID)).thenReturn(Optional.of(fullEvent));
+
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.areTicketsRemaining(fullEvent)).thenReturn(false);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+
+    TicketController controller = buildTicketController(mockEventService, mockTicketService);
+    Ticket actualTicket = controller.requestTicket(EVENT_ID, EMAIL, mockResponse);
+
+    assertEquals(null, actualTicket);
+    assertEquals(HttpServletResponse.SC_CONFLICT, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testRequestTicket_NoEventForEventId() {
+    TicketController controller = new TicketController();
+
+    EventService mockEventService = mock(EventService.class);
+    when(mockEventService.findEvent(EVENT_ID)).thenReturn(Optional.empty());
+    controller.setEventService(mockEventService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+
+    Ticket actualTicket = controller.requestTicket(EVENT_ID, EMAIL, mockResponse);
+
+    assertEquals(null, actualTicket);
+    assertEquals(HttpServletResponse.SC_NOT_FOUND, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testValidateTicket_Success() {
+    TicketController controller = new TicketController();
+
+    Event validEvent = buildEvent(EVENT_ID);
+    Ticket ticketForEvent = buildTicket(TICKET_ID, TicketStatus.ACTIVE, validEvent);
+
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.retrieveTicket(TICKET_ID)).thenReturn(Optional.of(ticketForEvent));
+    controller.setTicketService(mockTicketService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    controller.validateTicket(TICKET_ID, EVENT_ID, mockResponse);
+
+    verify(mockTicketService).validateTicket(ticketForEvent);
+    assertEquals(HttpServletResponse.SC_OK, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testValidateTicket_TicketIsAlreadyValidated() {
+    TicketController controller = new TicketController();
+
+    Event validEvent = buildEvent(EVENT_ID);
+    Ticket ticketForEvent = buildTicket(TICKET_ID, TicketStatus.VALIDATED, validEvent);
+
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.retrieveTicket(TICKET_ID)).thenReturn(Optional.of(ticketForEvent));
+    controller.setTicketService(mockTicketService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    controller.validateTicket(TICKET_ID, EVENT_ID, mockResponse);
+
+    verify(mockTicketService, never()).validateTicket(ticketForEvent);
+    assertEquals(HttpServletResponse.SC_NOT_ACCEPTABLE, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testValidateTicket_TicketIsForDifferentEvent() {
+    TicketController controller = new TicketController();
+
+    Event differentEvent = buildEvent("different eventid");
+    Ticket ticketForDifferentEvent = buildTicket(TICKET_ID, TicketStatus.ACTIVE, differentEvent);
+
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.retrieveTicket(TICKET_ID)).thenReturn(Optional.of(ticketForDifferentEvent));
+    controller.setTicketService(mockTicketService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    controller.validateTicket(TICKET_ID, EVENT_ID, mockResponse);
+
+    verify(mockTicketService, never()).validateTicket(ticketForDifferentEvent);
+    assertEquals(HttpServletResponse.SC_CONFLICT, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testValidateTicket_TicketNotFound() {
+    TicketController controller = new TicketController();
+
+    TicketService mockTicketService = mock(TicketService.class);
+    when(mockTicketService.retrieveTicket(TICKET_ID)).thenReturn(Optional.empty());
+    controller.setTicketService(mockTicketService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    controller.validateTicket(TICKET_ID, EVENT_ID, mockResponse);
+
+    assertEquals(HttpServletResponse.SC_NOT_FOUND, mockResponse.getStatus());
+  }
+
+  private Event buildEvent(String eventId) {
     Event event = new Event();
-    event.setId("EID");
+    event.setId(eventId);
+
+    return event;
+  }
+
+  private Ticket buildTicket(String ticketId, TicketStatus status, Event event) {
+    Ticket ticket = new Ticket();
+    ticket.setId(ticketId);
+    ticket.setStatus(status);
     ticket.setEvent(event);
-    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-    when(ticketService.retrieveTicket("ID")).thenReturn(Optional.of(ticket));
-    ticketController.validateTicket("ID", "EID", httpServletResponse);
-    verify(ticketService, times(1)).validateTicket(ticket);
-    assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
 
-    //Tests scenario where validated
-    Ticket ticket2 = new Ticket();
-    ticket2.setStatus(TicketStatus.VALIDATED);
-    ticket2.setEvent(event);
-    HttpServletResponse httpServletResponse2 = new MockHttpServletResponse();
-    when(ticketService.retrieveTicket("ID2")).thenReturn(Optional.of(ticket2));
-    ticketController.validateTicket("ID2", "EID", httpServletResponse2);
-    verify(ticketService, times(0)).validateTicket(ticket2);
-    assertEquals(HttpServletResponse.SC_NOT_ACCEPTABLE, httpServletResponse2.getStatus());
-    assertEquals("Ticket with Id ID2 has already been validated. Could not validate.",
-            httpServletResponse2.getHeader("gala-message"));
+    return ticket;
+  }
 
-    //Test where ticket could not be found
-    HttpServletResponse httpServletResponse3 = new MockHttpServletResponse();
-    when(ticketService.retrieveTicket("ID3")).thenReturn(Optional.empty());
-    ticketController.validateTicket("ID3", "EID", httpServletResponse3);
-    assertEquals(HttpServletResponse.SC_NOT_FOUND, httpServletResponse3.getStatus());
+  private TicketController buildTicketController(EventService eventService, TicketService ticketService) {
+    return buildTicketController(eventService, ticketService, null, null);
+  }
 
-    //Test where ticket belongs to wrong event
-    HttpServletResponse httpServletResponse4 = new MockHttpServletResponse();
-    Ticket ticket3 = new Ticket();
-    ticket3.setStatus(TicketStatus.ACTIVE);
-    ticket3.setEvent(event);
-    when(ticketService.retrieveTicket("ID4")).thenReturn(Optional.of(ticket3));
-    ticketController.validateTicket("ID4", "EID2", httpServletResponse4);
-    assertEquals(HttpServletResponse.SC_CONFLICT, httpServletResponse4.getStatus());
+  private TicketController buildTicketController(EventService eventService, TicketService ticketService,
+                                                 AwsS3Service awsS3Service, EmailService emailService) {
+    TicketController controller = new TicketController();
+    controller.setEventService(eventService);
+    controller.setTicketService(ticketService);
+    controller.setAwsS3Service(awsS3Service);
+    controller.setEmailService(emailService);
+
+    return controller;
   }
 }

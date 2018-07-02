@@ -69,7 +69,7 @@ public class TicketServiceTest {
   }
 
   @Test
-  public void testRetriveTicket() {
+  public void testRetrieveTicket() {
     TicketService service = new TicketService();
     TicketCrudDao ticketCrudDao = mock(TicketCrudDao.class);
 
@@ -79,6 +79,6 @@ public class TicketServiceTest {
     when(ticketCrudDao.findById("One")).thenReturn(maybeTicket);
     service.setTicketCrudDao(ticketCrudDao);
 
-    assertEquals(maybeTicket.get(), service.retrieveTicket("One").get());
+    assertEquals(maybeTicket, service.retrieveTicket("One"));
   }
 }
