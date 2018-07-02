@@ -69,7 +69,8 @@ public class TicketController {
     return null;
   }
 
-  @PostMapping("/sendTicketCreationEmail")
+  //TODO Complete
+  @PostMapping("/email")
   @ResponseBody
   public void sendTicketEmail(@RequestParam String ticketId, HttpServletResponse response) {
     Optional<Ticket> maybeTicket = ticketService.retrieveTicket(ticketId);
