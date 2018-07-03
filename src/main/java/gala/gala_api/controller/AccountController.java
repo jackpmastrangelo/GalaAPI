@@ -28,12 +28,14 @@ public class AccountController {
       Optional<Account> existingAccountWithEmail = accountService.findByEmail(email);
 
       if (existingAccountWithEmail.isPresent()) {
-        response.setStatus(HttpServletResponse.SC_CONFLICT);
+        GalaApiSpec.sendError(response, HttpServletResponse.SC_CONFLICT,
+                "That email is already in use.");
       } else {
         accountService.createAccount(firstName, lastName, email, password);
       }
     } else {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      GalaApiSpec.sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+              "The given email parameter is not a valid email.");
     }
   }
 

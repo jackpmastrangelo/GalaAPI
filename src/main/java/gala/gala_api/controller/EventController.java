@@ -25,7 +25,6 @@ import java.util.Optional;
  * Controller for API endpoints relating to events,
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") //TODO Best way to configure CORS
 @RequestMapping("/events")
 public class EventController {
 
@@ -49,7 +48,6 @@ public class EventController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
 
-    response.setStatus(HttpServletResponse.SC_OK);
     return eventService.retrieveEventsByAccount(account);
   }
 
@@ -77,7 +75,6 @@ public class EventController {
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
     Event event = eventService.createEvent(account, name, place, eventTime, capacity);
 
-    response.setStatus(HttpServletResponse.SC_OK);
     return event;
   }
 
@@ -95,13 +92,11 @@ public class EventController {
   })
   public Event retrieveEventById(@PathVariable("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);
-
     if (maybeEvent.isPresent()) {
-      response.setStatus(HttpServletResponse.SC_OK);
       return maybeEvent.get();
-    } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
+
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     return null;
   }
 

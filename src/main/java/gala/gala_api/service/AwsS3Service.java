@@ -41,15 +41,6 @@ public class AwsS3Service {
 
   private AmazonS3 amazonS3Client;
 
-  /*
-  //TODO If this seems reasonable delete this comment
-    Reasons I think this should be in the AwsS3Service
-    1. One less dependency of the ticket service
-    2. No ambiguity in the ticket service about data sources
-    3. The AwsS3Service would then fully convey the scope of S3 in Gala at the business level
-    4. Consolidate S3-dependant constants like bucket names and keys
-    5. Closer to the code that retrieves the QR-code and could clarify the lifecycle of the QR code
-   */
   public void generateAndUploadQrCodeTicket(String ticketId) {
     QRCodeWriter qrCodeWriter = new QRCodeWriter();
     try {
@@ -70,12 +61,9 @@ public class AwsS3Service {
   // Is this too brittle?
   public String fetchTicketEmailHtml(String eventName, String ticketId) {
     S3Object emailTemplate = amazonS3Client.getObject(GALA_FILESTORE_BUCKET, TICKET_EMAIL_KEY);
-    String htmlBody = readToString(emailTemplate);
 
-    return htmlBody
+    return readToString(emailTemplate)
             .replace("-EVENT_NAME-", eventName)
-            //It is not apparent that this is building the ticket key link without looking
-            //at the template in S3
             .replace("-QR_CODE_NUMBER-", ticketId);
   }
 

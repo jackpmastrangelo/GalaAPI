@@ -15,7 +15,6 @@ import gala.gala_api.service.AwsS3Service;
 @Service
 public class EmailRequestFactoryService {
 
-  //TODO property?
   private static final String TICKETING_GALATIX_EMAIL = "ticketing@galatix.io";
   private static final String UTF_8 = "UTF-8";
 

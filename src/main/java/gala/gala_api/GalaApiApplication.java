@@ -9,12 +9,6 @@ import java.util.Properties;
 public class GalaApiApplication {
 
 	public static void main(String[] args) {
-
-	  Properties props = System.getProperties();
-
-	  props.setProperty("aws.accessKeyId", "AKIAI5IBV6L36SK75GRQ");
-	  props.setProperty("aws.secretKey", "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");
-
 	  SpringApplication.run(GalaApiApplication.class, args);
 	}
 }
