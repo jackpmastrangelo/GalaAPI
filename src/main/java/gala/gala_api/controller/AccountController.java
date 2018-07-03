@@ -1,11 +1,8 @@
 package gala.gala_api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -39,6 +36,10 @@ public class AccountController {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
   }
+
+  @PostMapping("/login")
+  @ResponseStatus(HttpStatus.OK)
+  public void login() {}
 
   private boolean isValidEmailRegex(String email) {
     String validEmailRegex = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@" +
