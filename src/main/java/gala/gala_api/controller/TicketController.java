@@ -56,15 +56,14 @@ public class TicketController {
         awsS3Service.generateAndUploadQrCodeTicket(ticket.getId());
         emailService.sendTicketEmail(ticket);
 
-        GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_OK,"Ticket successfully added.");
         return ticket;
       } else {
-        GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_CONFLICT, "Event capacity "
-                + "has already been reached.");
+        GalaApiSpec.sendError(response, HttpStatus.SC_CONFLICT,
+                "Event capacity " + "has already been reached.");
       }
     } else {
-      GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_FOUND, "Event with id "
-              + eventId + " could not be found.");
+      GalaApiSpec.sendError(response, HttpStatus.SC_NOT_FOUND,
+              "Event with id " + eventId + " could not be found.");
     }
 
     return null;
@@ -98,15 +97,17 @@ public class TicketController {
             response.setStatus(HttpServletResponse.SC_OK);
             break;
           case VALIDATED:
-            GalaApiSpec.setResponseStatusAndMessage(response, HttpStatus.SC_NOT_ACCEPTABLE, "Ticket with Id "
-                    + ticketId + " has already been validated. Could not validate.");
+            GalaApiSpec.sendError(response, HttpStatus.SC_NOT_ACCEPTABLE,
+                    "Ticket with Id " + ticketId + " has already been validated. Could not validate.");
             break;
         }
       } else {
-        response.setStatus(HttpServletResponse.SC_CONFLICT);
+        GalaApiSpec.sendError(response, HttpServletResponse.SC_CONFLICT,
+                "The given ticket is not for the given event.");
       }
     } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      GalaApiSpec.sendError(response, HttpServletResponse.SC_NOT_FOUND,
+              "The given ticket cannot be found.");
     }
   }
 
