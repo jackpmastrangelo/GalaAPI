@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll();
     http.authorizeRequests()
-            .antMatchers("/events/**", "/tickets/validate", "/accounts/login")
+            .antMatchers("/events/users", "/tickets/validate", "/accounts/login")
             .fullyAuthenticated()
             .and().httpBasic()
             .and().cors()
