@@ -19,6 +19,7 @@ public class AccountController {
 
   private AccountService accountService;
 
+  //TODO move params to body of POST
   @PostMapping
   @ResponseBody
   public void createAccount(@RequestParam String firstName, @RequestParam String lastName,
