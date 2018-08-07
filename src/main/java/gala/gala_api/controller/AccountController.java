@@ -19,7 +19,6 @@ import gala.gala_api.service.AccountService;
 public class AccountController {
 
   private AccountService accountService;
-
   private JwtTokenProvider jwtTokenProvider;
 
   @PostMapping
@@ -47,7 +46,7 @@ public class AccountController {
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public String login(@RequestBody LoginBody body, HttpServletResponse response) {
-    if (accountService.validAccount(body.getEmail(), body.getPassword())) {
+    if (jwtTokenProvider.isValidAccount(body.getEmail(), body.getPassword())) {
       return jwtTokenProvider.createToken(body.getEmail());
     } else {
       GalaApiSpec.sendError(response, HttpStatus.FORBIDDEN.value(), "Account credentials were invalid.");

@@ -12,6 +12,7 @@ import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -79,10 +80,48 @@ public class AccountControllerTest {
     assertEquals(HttpServletResponse.SC_CONFLICT, mockResponse.getStatus());
   }
 
+  @Test
+  public void testLogin_ValidCredentials() {
+    AccountController controller = new AccountController();
+
+    JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
+    when(mockTokenProvider.isValidAccount(VALID_EMAIL, PASSWORD)).thenReturn(true);
+    when(mockTokenProvider.createToken(VALID_EMAIL)).thenReturn(FAKE_JWT_TOKEN);
+    controller.setJwtTokenProvider(mockTokenProvider);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    String actualToken = controller.login(buildLoginBody(VALID_EMAIL, PASSWORD), mockResponse);
+
+    assertEquals(FAKE_JWT_TOKEN, actualToken);
+  }
+
+  @Test
+  public void testLogin_InvalidCredentials() {
+    AccountController controller = new AccountController();
+
+    JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
+    when(mockTokenProvider.isValidAccount(INVALID_EMAIL, PASSWORD)).thenReturn(false);
+    controller.setJwtTokenProvider(mockTokenProvider);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    String actualToken = controller.login(buildLoginBody(INVALID_EMAIL, PASSWORD), mockResponse);
+
+    assertNull(actualToken);
+    assertEquals(HttpServletResponse.SC_FORBIDDEN, mockResponse.getStatus());
+  }
+
   private CreateAccountBody buildCreateAccountBody(String firstName, String lastName, String email, String password) {
     CreateAccountBody body = new CreateAccountBody();
     body.setFirstName(firstName);
     body.setLastName(lastName);
+    body.setEmail(email);
+    body.setPassword(password);
+
+    return body;
+  }
+
+  private LoginBody buildLoginBody(String email, String password) {
+    LoginBody body = new LoginBody();
     body.setEmail(email);
     body.setPassword(password);
 
