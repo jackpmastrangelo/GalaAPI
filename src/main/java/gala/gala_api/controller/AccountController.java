@@ -33,7 +33,7 @@ public class AccountController {
         GalaApiSpec.sendError(response, HttpServletResponse.SC_CONFLICT,
                 "That email is already in use.");
       } else {
-        accountService.createAccountAndReturnToken(body.getFirstName(), body.getLastName(), body.getEmail(), body.getPassword());
+        accountService.createAccount(body.getFirstName(), body.getLastName(), body.getEmail(), body.getPassword());
         return jwtTokenProvider.createToken(body.getEmail());
       }
     } else {

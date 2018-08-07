@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Controller for API endpoints relating to events,
+ * Controller for API endpoints relating to events.
  */
 @RestController
 @RequestMapping("/events")
@@ -30,13 +30,9 @@ public class EventController {
 
   private EventService eventService;
 
-  private AccountService accountService;
-
   /**
    * This endpoint returns a JSONArray of all the events from the associated user. Authenticated user must be same as
    * user who's events are being returned.
-   *
-   * @param response Http response passed in by Spring.
    *
    * @return The events associated with this user.
    */
@@ -44,7 +40,7 @@ public class EventController {
   @ApiResponses(value = {
           @ApiResponse(code = HttpStatus.SC_OK, message = "Successfully retrieved user events."),
   })
-  public List<Event> retrieveUserEvents(HttpServletResponse response) {
+  public List<Event> retrieveUserEvents() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
 
@@ -58,19 +54,18 @@ public class EventController {
    * @param place String defining where the event will take place.
    * @param eventTime Datetime of the event.
    * @param capacity Maximum number of tickets that can be generated.
-   * @param response Response object passed in by Spring
    *
    * @return The created Event if successful, otherwise different status codes. Refer to README API Spec.
    */
   @PostMapping("/users")
   @ApiResponses(value = {
-          @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created")
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created.")
   })
-  public Event createNewUserEvent(@RequestParam("name") String name,
-                                  @RequestParam("place") String place,
-                                  //TODO How pass in dates well?
-                                  @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
-                                  @RequestParam("capacity") int capacity, HttpServletResponse response) {
+  public Event createEvent(@RequestParam("name") String name,
+                           @RequestParam("place") String place,
+                           //TODO How pass in dates well?
+                           @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
+                           @RequestParam("capacity") int capacity) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
     Event event = eventService.createEvent(account, name, place, eventTime, capacity);
@@ -103,10 +98,5 @@ public class EventController {
   @Autowired
   public void setEventService(EventService eventService) {
     this.eventService = eventService;
-  }
-
-  @Autowired
-  public void setAccountService(AccountService accountService) {
-    this.accountService = accountService;
   }
 }

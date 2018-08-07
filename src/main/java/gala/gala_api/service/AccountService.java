@@ -21,7 +21,7 @@ public class AccountService {
   private PasswordEncoder passwordEncoder;
   private AuthenticationManager authenticationManager;
 
-  public void createAccountAndReturnToken(String firstName, String lastName, String email, String password) {
+  public void createAccount(String firstName, String lastName, String email, String password) {
     Account account = new Account();
     account.setFirstName(firstName);
     account.setLastName(lastName);

@@ -3,9 +3,8 @@ package gala.gala_api.controller;
 import gala.gala_api.data_model.AccountUserDetails;
 import gala.gala_api.entity.Account;
 import gala.gala_api.entity.Event;
-import gala.gala_api.service.AccountService;
 import gala.gala_api.service.EventService;
-import gala.gala_api.service.security.AccountLoaderSecurityService;
+
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -50,14 +48,14 @@ public class EventControllerTest {
     eventController.setEventService(eventService);
 
 
-    List<Event> eventList1 = eventController.retrieveUserEvents(httpServletResponse);
+    List<Event> eventList1 = eventController.retrieveUserEvents();
 
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
     assertEquals(2, eventList1.size());
   }
 
   @Test
-  public void testCreateNewUserEvent() {
+  public void testCreateEvent() {
     EventController eventController = new EventController();
     EventService eventService = mock(EventService.class);
 
@@ -75,13 +73,12 @@ public class EventControllerTest {
     TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
     SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
-    when(eventService.createEvent(account, "ACAIDA", "Acaida", date, 16))
+    when(eventService.createEvent(account, "ACADIA", "Acadia", date, 16))
             .thenReturn(event);
 
     eventController.setEventService(eventService);
 
-    Event result = eventController.createNewUserEvent("ACAIDA", "Acaida",
-            date, 16, httpServletResponse);
+    Event result = eventController.createEvent("ACADIA", "Acadia", date, 16);
 
     assertEquals(event, result);
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());

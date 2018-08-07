@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import gala.gala_api.config.security.JwtTokenProvider;
 import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 
@@ -28,6 +29,7 @@ public class AccountControllerTest {
   private static final String VALID_EMAIL = "bob@example.com";
   private static final String INVALID_EMAIL = "notanemail";
 
+  private static final String FAKE_JWT_TOKEN = "token";
 
   @Test
   public void testCreateAccount_ValidEmail() {
@@ -38,11 +40,17 @@ public class AccountControllerTest {
     when(mockAccountService.findByEmail(VALID_EMAIL)).thenReturn(Optional.empty());
     controller.setAccountService(mockAccountService);
 
-    HttpServletResponse mockResponse = new MockHttpServletResponse();
-    controller.createAccount(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD, mockResponse);
+    JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
+    when(mockTokenProvider.createToken(VALID_EMAIL)).thenReturn(FAKE_JWT_TOKEN);
+    controller.setJwtTokenProvider(mockTokenProvider);
 
-    verify(mockAccountService).createAccount(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD);
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    CreateAccountBody requestBody = buildCreateAccountBody(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD);
+    String actualJwtToken = controller.createAccount(requestBody, mockResponse);
+
+    assertEquals(FAKE_JWT_TOKEN, actualJwtToken);
     assertEquals(HttpServletResponse.SC_OK, mockResponse.getStatus());
+    verify(mockAccountService).createAccount(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD);
   }
 
   @Test
@@ -52,7 +60,7 @@ public class AccountControllerTest {
     controller.setAccountService(mockAccountService);
 
     HttpServletResponse mockResponse = new MockHttpServletResponse();
-    controller.createAccount(FIRST_NAME, LAST_NAME, INVALID_EMAIL, PASSWORD, mockResponse);
+    controller.createAccount(buildCreateAccountBody(FIRST_NAME, LAST_NAME, INVALID_EMAIL, PASSWORD), mockResponse);
 
     verify(mockAccountService, never()).createAccount(anyString(), anyString(), anyString(), anyString());
     assertEquals(HttpServletResponse.SC_BAD_REQUEST, mockResponse.getStatus());
@@ -67,9 +75,19 @@ public class AccountControllerTest {
     controller.setAccountService(mockAccountService);
 
     HttpServletResponse mockResponse = new MockHttpServletResponse();
-    controller.createAccount(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD, mockResponse);
+    controller.createAccount(buildCreateAccountBody(FIRST_NAME, LAST_NAME, VALID_EMAIL, PASSWORD), mockResponse);
 
     verify(mockAccountService, never()).createAccount(anyString(), anyString(), anyString(), anyString());
     assertEquals(HttpServletResponse.SC_CONFLICT, mockResponse.getStatus());
+  }
+
+  private CreateAccountBody buildCreateAccountBody(String firstName, String lastName, String email, String password) {
+    CreateAccountBody body = new CreateAccountBody();
+    body.setFirstName(firstName);
+    body.setLastName(lastName);
+    body.setEmail(email);
+    body.setPassword(password);
+
+    return body;
   }
 }
