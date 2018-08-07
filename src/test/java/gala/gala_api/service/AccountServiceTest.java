@@ -69,10 +69,10 @@ public class AccountServiceTest {
     expectedAccount.setEmail(EMAIL);
 
     AccountCrudDao mockAccountCrudDao = mock(AccountCrudDao.class);
-    when(mockAccountCrudDao.findByEmail(EMAIL)).thenReturn(Optional.of(expectedAccount));
+    when(mockAccountCrudDao.findByEmailIgnoreCase(EMAIL)).thenReturn(Optional.of(expectedAccount));
     service.setAccountCrudDao(mockAccountCrudDao);
 
-    Optional<Account> actualAccount = service.findByEmail(EMAIL);
+    Optional<Account> actualAccount = service.findByEmailIgnoreCase(EMAIL);
     assertEquals(Optional.of(expectedAccount), actualAccount);
   }
 }

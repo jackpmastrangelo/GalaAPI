@@ -31,7 +31,7 @@ public class AccountLoaderSecurityServiceTest {
     expectedAccount.setPassword(PASSWORD);
 
     AccountService mockAccountService = mock(AccountService.class);
-    when(mockAccountService.findByEmail(EMAIL_WITH_ACCOUNT)).thenReturn(Optional.of(expectedAccount));
+    when(mockAccountService.findByEmailIgnoreCase(EMAIL_WITH_ACCOUNT)).thenReturn(Optional.of(expectedAccount));
 
     AccountLoaderSecurityService service = buildAccountLoaderService(mockAccountService);
     try {

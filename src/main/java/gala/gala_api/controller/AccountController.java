@@ -27,7 +27,7 @@ public class AccountController {
   public String createAccount(@RequestBody CreateAccountBody body,
                             HttpServletResponse response) {
     if (isValidEmailRegex(body.getEmail())) {
-      Optional<Account> existingAccountWithEmail = accountService.findByEmail(body.getEmail());
+      Optional<Account> existingAccountWithEmail = accountService.findByEmailIgnoreCase(body.getEmail());
 
       if (existingAccountWithEmail.isPresent()) {
         GalaApiSpec.sendError(response, HttpServletResponse.SC_CONFLICT,

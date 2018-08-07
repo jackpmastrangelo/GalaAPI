@@ -44,8 +44,8 @@ public class AccountService {
     return accountCrudDao.findById(accountId);
   }
 
-  public Optional<Account> findByEmail(String email) {
-    return accountCrudDao.findByEmail(email);
+  public Optional<Account> findByEmailIgnoreCase(String email) {
+    return accountCrudDao.findByEmailIgnoreCase(email);
   }
 
   @Autowired

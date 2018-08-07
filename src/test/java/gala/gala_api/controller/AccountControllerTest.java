@@ -11,12 +11,10 @@ import gala.gala_api.config.security.JwtTokenProvider;
 import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +35,7 @@ public class AccountControllerTest {
 
     AccountService mockAccountService = mock(AccountService.class);
     //This is actually default behavior but is left in for logical clarity
-    when(mockAccountService.findByEmail(VALID_EMAIL)).thenReturn(Optional.empty());
+    when(mockAccountService.findByEmailIgnoreCase(VALID_EMAIL)).thenReturn(Optional.empty());
     controller.setAccountService(mockAccountService);
 
     JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
@@ -71,7 +69,7 @@ public class AccountControllerTest {
     AccountController controller = new AccountController();
 
     AccountService mockAccountService = mock(AccountService.class);
-    when(mockAccountService.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(new Account()));
+    when(mockAccountService.findByEmailIgnoreCase(VALID_EMAIL)).thenReturn(Optional.of(new Account()));
     controller.setAccountService(mockAccountService);
 
     HttpServletResponse mockResponse = new MockHttpServletResponse();

@@ -164,4 +164,36 @@ public class Event implements Serializable {
   public void setId(String id) {
     this.id = id;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Event event = (Event) o;
+
+    if (id != null ? !id.equals(event.id) : event.id != null) return false;
+    if (name != null ? !name.equals(event.name) : event.name != null) return false;
+    if (place != null ? !place.equals(event.place) : event.place != null) return false;
+    if (eventTime != null ? !eventTime.equals(event.eventTime) : event.eventTime != null)
+      return false;
+    if (account != null ? !account.equals(event.account) : event.account != null) return false;
+    if (capacity != null ? !capacity.equals(event.capacity) : event.capacity != null) return false;
+    if (createdAt != null ? !createdAt.equals(event.createdAt) : event.createdAt != null)
+      return false;
+    return updatedAt != null ? updatedAt.equals(event.updatedAt) : event.updatedAt == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (place != null ? place.hashCode() : 0);
+    result = 31 * result + (eventTime != null ? eventTime.hashCode() : 0);
+    result = 31 * result + (account != null ? account.hashCode() : 0);
+    result = 31 * result + (capacity != null ? capacity.hashCode() : 0);
+    result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+    result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
+    return result;
+  }
 }

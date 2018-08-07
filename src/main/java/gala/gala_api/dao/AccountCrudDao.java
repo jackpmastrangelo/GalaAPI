@@ -9,9 +9,9 @@ import java.util.Optional;
 import gala.gala_api.entity.Account;
 
 /**
- * Spring Data provides the implementation. CAREFUL when altering the method
- * names and signatures.
+ * Spring Data provides the implementation.
+ * CAREFUL when altering the method names and signatures as these determine the implementation.
  */
 public interface AccountCrudDao extends CrudRepository<Account, String> {
-  Optional<Account> findByEmail(String email);
+  Optional<Account> findByEmailIgnoreCase(String email);
 }
