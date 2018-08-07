@@ -76,4 +76,9 @@ public class JwtTokenProvider {
   public void setAccountLoaderSecurityService(AccountLoaderSecurityService accountLoaderSecurityService) {
     this.accountLoaderSecurityService = accountLoaderSecurityService;
   }
+
+  @Autowired
+  public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
+  }
 }
