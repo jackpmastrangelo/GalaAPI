@@ -1,11 +1,10 @@
 package gala.gala_api.service;
 
-import gala.gala_api.config.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
@@ -14,17 +13,13 @@ import gala.gala_api.entity.Account;
 
 import java.util.Optional;
 
-@Component
+@Service
 @Transactional
 public class AccountService {
 
   private AccountCrudDao accountCrudDao;
-
   private PasswordEncoder passwordEncoder;
-
   private AuthenticationManager authenticationManager;
-
-  private JwtTokenProvider jwtTokenProvider;
 
   public void createAccountAndReturnToken(String firstName, String lastName, String email, String password) {
     Account account = new Account();
@@ -66,10 +61,5 @@ public class AccountService {
   @Autowired
   public void setAuthenticationManager(AuthenticationManager authenticationManager) {
     this.authenticationManager = authenticationManager;
-  }
-
-  @Autowired
-  public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-    this.jwtTokenProvider = jwtTokenProvider;
   }
 }

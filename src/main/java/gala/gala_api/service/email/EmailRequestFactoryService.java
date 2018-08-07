@@ -13,14 +13,14 @@ import gala.gala_api.entity.Ticket;
 import gala.gala_api.service.AwsS3Service;
 
 @Service
-public class EmailRequestFactoryService {
+class EmailRequestFactoryService {
 
   private static final String TICKETING_GALATIX_EMAIL = "ticketing@galatix.io";
   private static final String UTF_8 = "UTF-8";
 
   private AwsS3Service awsS3Service;
 
-  public SendEmailRequest buildTicketEmailRequest(Ticket ticket) {
+  SendEmailRequest buildTicketEmailRequest(Ticket ticket) {
     String eventName = ticket.getEvent().getName();
 
     String toAddress = ticket.getEmail();

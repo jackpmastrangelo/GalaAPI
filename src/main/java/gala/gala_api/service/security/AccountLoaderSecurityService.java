@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,7 @@ import gala.gala_api.dao.AccountCrudDao;
 import gala.gala_api.entity.Account;
 import gala.gala_api.service.AccountService;
 
-@Component
+@Service
 public class AccountLoaderSecurityService implements UserDetailsService {
 
   private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS =

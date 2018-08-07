@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
 @Service
+@Transactional
 public class EventService {
 
   private EventCrudDao eventCrudDao;
