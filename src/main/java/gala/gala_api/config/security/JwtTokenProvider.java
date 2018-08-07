@@ -34,18 +34,17 @@ public class JwtTokenProvider {
     secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  public String createToken(String username) {
-
-    Claims claims = Jwts.claims().setSubject(username);
+  public String createToken(String email) {
+    Claims claims = Jwts.claims().setSubject(email);
     claims.put("auth", "User");
 
     Date now = new Date();
-    Date validity = new Date(now.getTime() + validityInMilliseconds);
+    Date expirationDate = new Date(now.getTime() + validityInMilliseconds);
 
     return Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(now)
-            .setExpiration(validity)
+            .setExpiration(expirationDate)
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact();
   }
@@ -53,9 +52,9 @@ public class JwtTokenProvider {
   public Authentication createAuthentication(String token) {
     try {
       Jws<Claims> jws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-      String username = jws.getBody().getSubject();
+      String email = jws.getBody().getSubject();
 
-      UserDetails userDetails = accountLoaderSecurityService.loadUserByUsername(username);
+      UserDetails userDetails = accountLoaderSecurityService.loadUserByUsername(email);
       return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     } catch (JwtException | IllegalArgumentException e) {
       return null;

@@ -1,7 +1,9 @@
 package gala.gala_api.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -11,12 +13,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Component
 public class JwtAuthenticationFilter extends GenericFilterBean {
-  private JwtTokenProvider jwtTokenProvider;
 
-  public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
-    this.jwtTokenProvider = jwtTokenProvider;
-  }
+  private static final String AUTHORIZATION_HEADER = "Authorization";
+  private static final String BEARER_TOKEN_PREFIX = "Bearer ";
+
+  private JwtTokenProvider jwtTokenProvider;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -34,11 +37,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
   }
 
   private String extractToken(HttpServletRequest req) {
-    String bearerToken = req.getHeader("Authorization");
-    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-      return bearerToken.substring(7, bearerToken.length());
+    String bearerToken = req.getHeader(AUTHORIZATION_HEADER);
+    if (bearerToken != null && bearerToken.startsWith(BEARER_TOKEN_PREFIX)) {
+      return bearerToken.substring(BEARER_TOKEN_PREFIX.length(), bearerToken.length());
     }
 
     return null;
+  }
+
+  @Autowired
+  public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
+    this.jwtTokenProvider = jwtTokenProvider;
   }
 }

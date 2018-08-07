@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private JwtTokenProvider jwtTokenProvider;
+  private JwtTokenFilterConfigurer jwtTokenFilterConfigurer;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -41,16 +41,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.csrf().disable();
 
     // Apply JWT
-    http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+    http.apply(jwtTokenFilterConfigurer);
 
     //Route matching to set security.
     http.authorizeRequests()
             .antMatchers("/events/users", "/tickets/validate")
             .authenticated()
-            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
-  //Allow any origin to make calls to the api
   @Bean
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {
@@ -63,14 +63,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
   }
 
-  @Autowired
-  public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-    this.jwtTokenProvider = jwtTokenProvider;
-  }
-
   @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
+  }
+
+  @Autowired
+  public void setJwtTokenFilterConfigurer(JwtTokenFilterConfigurer jwtTokenFilterConfigurer) {
+    this.jwtTokenFilterConfigurer = jwtTokenFilterConfigurer;
   }
 }
