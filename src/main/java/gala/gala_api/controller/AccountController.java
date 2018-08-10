@@ -46,7 +46,7 @@ public class AccountController {
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public String login(@RequestBody LoginBody body, HttpServletResponse response) {
-    if (jwtTokenProvider.isValidAccount(body.getEmail(), body.getPassword())) {
+    if (accountService.isValidAccount(body.getEmail(), body.getPassword())) {
       return jwtTokenProvider.createToken(body.getEmail());
     } else {
       GalaApiSpec.sendError(response, HttpStatus.FORBIDDEN.value(), "Account credentials were invalid.");

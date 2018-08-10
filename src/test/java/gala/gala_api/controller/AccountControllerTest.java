@@ -84,8 +84,11 @@ public class AccountControllerTest {
   public void testLogin_ValidCredentials() {
     AccountController controller = new AccountController();
 
+    AccountService mockAccountService = mock(AccountService.class);
+    when(mockAccountService.isValidAccount(VALID_EMAIL, PASSWORD)).thenReturn(true);
+    controller.setAccountService(mockAccountService);
+
     JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
-    when(mockTokenProvider.isValidAccount(VALID_EMAIL, PASSWORD)).thenReturn(true);
     when(mockTokenProvider.createToken(VALID_EMAIL)).thenReturn(FAKE_JWT_TOKEN);
     controller.setJwtTokenProvider(mockTokenProvider);
 
@@ -99,9 +102,9 @@ public class AccountControllerTest {
   public void testLogin_InvalidCredentials() {
     AccountController controller = new AccountController();
 
-    JwtTokenProvider mockTokenProvider = mock(JwtTokenProvider.class);
-    when(mockTokenProvider.isValidAccount(INVALID_EMAIL, PASSWORD)).thenReturn(false);
-    controller.setJwtTokenProvider(mockTokenProvider);
+    AccountService mockAccountService = mock(AccountService.class);
+    when(mockAccountService.isValidAccount(VALID_EMAIL, PASSWORD)).thenReturn(false);
+    controller.setAccountService(mockAccountService);
 
     HttpServletResponse mockResponse = new MockHttpServletResponse();
     String actualToken = controller.login(buildLoginBody(INVALID_EMAIL, PASSWORD), mockResponse);

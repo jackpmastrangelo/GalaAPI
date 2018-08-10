@@ -1,6 +1,8 @@
 package gala.gala_api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ public class AccountService {
 
   private AccountCrudDao accountCrudDao;
   private PasswordEncoder passwordEncoder;
-
+  private AuthenticationManager authenticationManager;
 
   public void createAccount(String firstName, String lastName, String email, String password) {
     Account account = new Account();
@@ -27,6 +29,15 @@ public class AccountService {
     account.setPassword(passwordEncoder.encode(password));
 
     accountCrudDao.save(account);
+  }
+
+  public boolean isValidAccount(String email, String password) {
+    try {
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   public Optional<Account> findById(String accountId) {
@@ -45,5 +56,10 @@ public class AccountService {
   @Autowired
   public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
     this.passwordEncoder = passwordEncoder;
+  }
+
+  @Autowired
+  public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
   }
 }
