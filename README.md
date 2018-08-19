@@ -27,7 +27,7 @@ key as a String in the header as well. These will return a 403 Forbidden if unau
 ### Create New Event (Secure)
 `URL:` /events/users `HTTP Method`: POST
 
-`Parameters:` name : String, place : String, eventTime: Date, capacity : Integer
+`Parameters:` name : String, place : String, startTime: Date, capacity : Integer
 
 `Expected behavior:` Create a new event associated with this user.
 

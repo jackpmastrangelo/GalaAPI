@@ -18,13 +18,16 @@ public class EventService {
 
   private EventCrudDao eventCrudDao;
 
-  public Event createEvent(Account account, String name, String place, Date eventTime, int capacity) {
+  public Event createEvent(Account account, String name, String place, Date startTime, Date endTime, int capacity,
+                           String description) {
     Event event = new Event();
     event.setAccount(account);
     event.setName(name);
     event.setPlace(place);
-    event.setEventTime(eventTime);
+    event.setStartTime(startTime);
+    event.setEndTime(endTime);
     event.setCapacity(capacity);
+    event.setDescription(description);
 
     eventCrudDao.save(event);
 

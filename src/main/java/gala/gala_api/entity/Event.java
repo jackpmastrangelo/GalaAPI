@@ -2,21 +2,17 @@ package gala.gala_api.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "Event")
@@ -46,7 +42,11 @@ public class Event implements Serializable {
 
   @NotNull
   @Temporal(TemporalType.TIMESTAMP)
-  private Date eventTime;
+  private Date startTime;
+
+  @NotNull
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date endTime;
 
   @NotNull
   @ManyToOne
@@ -55,6 +55,9 @@ public class Event implements Serializable {
 
   @NotNull
   private Integer capacity;
+
+  @Column(length = 2048)
+  private String description;
 
   /**
    * The date this Event entity was created at.
@@ -94,8 +97,8 @@ public class Event implements Serializable {
   /**
    * Get the datetime the event will be held at.
    */
-  public Date getEventTime() {
-    return this.eventTime;
+  public Date getStartTime() {
+    return this.startTime;
   }
 
 
@@ -116,8 +119,16 @@ public class Event implements Serializable {
   /**
    * Set the datetime the event will be held at.
    */
-  public void setEventTime(Date eventTime) {
-    this.eventTime = eventTime;
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
+
+  public Date getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(Date endTime) {
+    this.endTime = endTime;
   }
 
   /**
@@ -163,5 +174,13 @@ public class Event implements Serializable {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

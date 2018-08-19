@@ -29,7 +29,7 @@ public class EventServiceTest {
 
     assertEquals("AIDACA", event.getName());
     assertEquals("Acadia", event.getPlace());
-    assertEquals(event.getEventTime().getTime(), calendar.getTime().getTime());
+    assertEquals(event.getStartTime().getTime(), calendar.getTime().getTime());
     assertEquals( 16, (int) event.getCapacity());
   }
 

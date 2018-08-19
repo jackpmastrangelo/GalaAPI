@@ -8,8 +8,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -54,10 +52,7 @@ public class EventController {
   /**
    * Creates a new event for the given account with the given parameters.
    *
-   * @param name The name of the event.
-   * @param place String defining where the event will take place.
-   * @param eventTime Datetime of the event.
-   * @param capacity Maximum number of tickets that can be generated.
+   * @param body Details of new event.
    * @param response Response object passed in by Spring
    *
    * @return The created Event if successful, otherwise different status codes. Refer to README API Spec.
@@ -66,14 +61,11 @@ public class EventController {
   @ApiResponses(value = {
           @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created")
   })
-  public Event createNewUserEvent(@RequestParam("name") String name,
-                                  @RequestParam("place") String place,
-                                  //TODO How pass in dates well?
-                                  @RequestParam("eventTime") @DateTimeFormat(pattern="MM-DD-YYYY") Date eventTime,
-                                  @RequestParam("capacity") int capacity, HttpServletResponse response) {
+  public Event createNewUserEvent(@RequestBody CreateNewUserEventBody body, HttpServletResponse response) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
-    Event event = eventService.createEvent(account, name, place, eventTime, capacity);
+    Event event = eventService.createEvent(account, body.getName(), body.getPlace(), body.getStartTime(),
+            body.getEndTime(), body.getCapacity(), body.getDescription());
 
     return event;
   }
@@ -108,5 +100,81 @@ public class EventController {
   @Autowired
   public void setAccountService(AccountService accountService) {
     this.accountService = accountService;
+  }
+}
+
+/**
+ * name The name of the event.
+ *  place String defining where the event will take place.
+ *    * @param startTime Datetime of the event.
+ *    * @param capacity Maximum number of tickets that can be generated.
+ *    * @param description A description of the event.
+ */
+class CreateNewUserEventBody {
+  //The name of the event.
+  private String name;
+
+  //String defining where the event will take place.
+  private String place;
+
+  //TODO How pass in dates well?
+  //Start datetime of the event.
+  private Date startTime;
+
+  //End datetime of the event.
+  private Date endTime;
+
+  //Maximum number of tickets that can be generated.
+  private int capacity;
+
+  //A description of the event.
+  private String description;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getPlace() {
+    return place;
+  }
+
+  public void setPlace(String place) {
+    this.place = place;
+  }
+
+  public Date getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
+
+  public Date getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(Date endTime) {
+    this.endTime = endTime;
+  }
+
+  public int getCapacity() {
+    return capacity;
+  }
+
+  public void setCapacity(int capacity) {
+    this.capacity = capacity;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }
