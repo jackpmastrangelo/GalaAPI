@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Controller for API endpoints relating to events,
+ * Controller for API endpoints relating to events.
  */
 @RestController
 @RequestMapping("/events")
@@ -28,13 +28,9 @@ public class EventController {
 
   private EventService eventService;
 
-  private AccountService accountService;
-
   /**
    * This endpoint returns a JSONArray of all the events from the associated user. Authenticated user must be same as
    * user who's events are being returned.
-   *
-   * @param response Http response passed in by Spring.
    *
    * @return The events associated with this user.
    */
@@ -42,7 +38,7 @@ public class EventController {
   @ApiResponses(value = {
           @ApiResponse(code = HttpStatus.SC_OK, message = "Successfully retrieved user events."),
   })
-  public List<Event> retrieveUserEvents(HttpServletResponse response) {
+  public List<Event> retrieveUserEvents() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Account account = ((AccountUserDetails) authentication.getPrincipal()).getAccount();
 
@@ -59,7 +55,7 @@ public class EventController {
    */
   @PostMapping("/users")
   @ApiResponses(value = {
-          @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created")
+          @ApiResponse(code=HttpStatus.SC_OK, message = "Event successfully created.")
   })
   public Event createNewUserEvent(@RequestBody CreateNewUserEventBody body, HttpServletResponse response) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -95,11 +91,6 @@ public class EventController {
   @Autowired
   public void setEventService(EventService eventService) {
     this.eventService = eventService;
-  }
-
-  @Autowired
-  public void setAccountService(AccountService accountService) {
-    this.accountService = accountService;
   }
 }
 

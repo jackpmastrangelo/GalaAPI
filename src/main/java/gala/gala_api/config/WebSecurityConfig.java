@@ -1,7 +1,7 @@
 package gala.gala_api.config;
 
-import gala.gala_api.config.security.JwtTokenFilterConfigurer;
-import gala.gala_api.config.security.JwtTokenProvider;
+import gala.gala_api.config.security.JwtFilterConfigurer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,19 +12,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private JwtTokenProvider jwtTokenProvider;
+  private JwtFilterConfigurer jwtFilterConfigurer;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -41,16 +36,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.csrf().disable();
 
     // Apply JWT
-    http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+    http.apply(jwtFilterConfigurer);
 
     //Route matching to set security.
     http.authorizeRequests()
             .antMatchers("/events/users", "/tickets/validate")
             .authenticated()
-            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
-  //Allow any origin to make calls to the api
   @Bean
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {
@@ -63,14 +58,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
   }
 
-  @Autowired
-  public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-    this.jwtTokenProvider = jwtTokenProvider;
-  }
-
   @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
+  }
+
+  @Autowired
+  public void setJwtFilterConfigurer(JwtFilterConfigurer jwtFilterConfigurer) {
+    this.jwtFilterConfigurer = jwtFilterConfigurer;
   }
 }

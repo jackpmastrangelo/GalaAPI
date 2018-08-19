@@ -13,8 +13,8 @@ import gala.gala_api.entity.Ticket;
 import gala.gala_api.entity.TicketStatus;
 import org.springframework.stereotype.Service;
 
-@Transactional
 @Service
+@Transactional
 public class TicketService {
 
   private TicketCrudDao ticketCrudDao;

@@ -2,6 +2,7 @@ package gala.gala_api.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -182,5 +183,28 @@ public class Event implements Serializable {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Event event = (Event) o;
+    return Objects.equals(id, event.id) &&
+            Objects.equals(name, event.name) &&
+            Objects.equals(place, event.place) &&
+            Objects.equals(startTime, event.startTime) &&
+            Objects.equals(endTime, event.endTime) &&
+            Objects.equals(account, event.account) &&
+            Objects.equals(capacity, event.capacity) &&
+            Objects.equals(description, event.description) &&
+            Objects.equals(createdAt, event.createdAt) &&
+            Objects.equals(updatedAt, event.updatedAt);
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hash(id, name, place, startTime, endTime, account, capacity, description, createdAt, updatedAt);
   }
 }

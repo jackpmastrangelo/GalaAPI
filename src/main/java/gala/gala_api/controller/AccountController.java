@@ -19,7 +19,6 @@ import gala.gala_api.service.AccountService;
 public class AccountController {
 
   private AccountService accountService;
-
   private JwtTokenProvider jwtTokenProvider;
 
   @PostMapping
@@ -27,13 +26,13 @@ public class AccountController {
   public String createAccount(@RequestBody CreateAccountBody body,
                             HttpServletResponse response) {
     if (isValidEmailRegex(body.getEmail())) {
-      Optional<Account> existingAccountWithEmail = accountService.findByEmail(body.getEmail());
+      Optional<Account> existingAccountWithEmail = accountService.findByEmailIgnoreCase(body.getEmail());
 
       if (existingAccountWithEmail.isPresent()) {
         GalaApiSpec.sendError(response, HttpServletResponse.SC_CONFLICT,
                 "That email is already in use.");
       } else {
-        accountService.createAccountAndReturnToken(body.getFirstName(), body.getLastName(), body.getEmail(), body.getPassword());
+        accountService.createAccount(body.getFirstName(), body.getLastName(), body.getEmail(), body.getPassword());
         return jwtTokenProvider.createToken(body.getEmail());
       }
     } else {
@@ -47,7 +46,7 @@ public class AccountController {
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public String login(@RequestBody LoginBody body, HttpServletResponse response) {
-    if (accountService.validAccount(body.getEmail(), body.getPassword())) {
+    if (accountService.isValidAccount(body.getEmail(), body.getPassword())) {
       return jwtTokenProvider.createToken(body.getEmail());
     } else {
       GalaApiSpec.sendError(response, HttpStatus.FORBIDDEN.value(), "Account credentials were invalid.");
