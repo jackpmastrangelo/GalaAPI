@@ -73,12 +73,20 @@ public class EventControllerTest {
     TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
     SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
 
-    when(eventService.createEvent(account, "ACADIA", "Acadia", date, 16))
+    when(eventService.createEvent(account, "ACADIA", "Acadia", date, date,16, "DESC"))
             .thenReturn(event);
 
     eventController.setEventService(eventService);
 
-    Event result = eventController.createEvent("ACADIA", "Acadia", date, 16);
+    CreateNewUserEventBody createNewUserEventBody = new CreateNewUserEventBody();
+    createNewUserEventBody.setName("ACADIA");
+    createNewUserEventBody.setPlace("Acadia");
+    createNewUserEventBody.setStartTime(date);
+    createNewUserEventBody.setEndTime(date);
+    createNewUserEventBody.setCapacity(16);
+    createNewUserEventBody.setDescription("DESC");
+
+    Event result = eventController.createNewUserEvent(createNewUserEventBody, httpServletResponse);
 
     assertEquals(event, result);
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());

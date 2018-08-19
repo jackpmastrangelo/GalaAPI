@@ -25,12 +25,13 @@ public class EventServiceTest {
     calendar.set(2018, Calendar.JUNE, 17);
 
     eventService.setEventCrudDao(eventCrudDao);
-    Event event = eventService.createEvent(account, "AIDACA", "Acadia", calendar.getTime(), 16 );
+    Event event = eventService.createEvent(account, "AIDACA", "Acadia", calendar.getTime(), calendar.getTime(), 16 , "DESC");
 
     assertEquals("AIDACA", event.getName());
     assertEquals("Acadia", event.getPlace());
     assertEquals(event.getStartTime().getTime(), calendar.getTime().getTime());
     assertEquals( 16, (int) event.getCapacity());
+    assertEquals("DESC", event.getDescription());
   }
 
   @Test

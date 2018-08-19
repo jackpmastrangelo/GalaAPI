@@ -40,7 +40,8 @@ public class EventCrudDaoTest {
     event.setName("event");
     event.setPlace("place");
     event.setCapacity(10);
-    event.setEventTime(new Date());
+    event.setStartTime(new Date());
+    event.setEndTime(new Date());
     event.setAccount(account);
     testEntityManager.persist(event);
 

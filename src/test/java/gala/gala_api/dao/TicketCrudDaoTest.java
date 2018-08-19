@@ -15,7 +15,7 @@ import gala.gala_api.entity.Ticket;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -40,12 +40,14 @@ public class TicketCrudDaoTest {
     event1.setName("e1");
     event1.setPlace("No");
     event1.setStartTime(new Date());
+    event1.setEndTime(new Date());
     event1.setCapacity(20);
     Event event2 = new Event();
     event2.setAccount(account);
     event2.setName("e2");
     event2.setPlace("No");
     event2.setStartTime(new Date());
+    event2.setEndTime(new Date());
     event2.setCapacity(25);
     Ticket ticket1 = new Ticket();
     ticket1.setEvent(event1);
@@ -71,9 +73,9 @@ public class TicketCrudDaoTest {
 
     List<Ticket> ticketList = ticketCrudDao.findByEvent(event1);
 
-    assertEquals(true, ticketList.contains(ticket1));
-    assertEquals(true, ticketList.contains(ticket2));
-    assertEquals(false, ticketList.contains(ticket3));
+    assertTrue(ticketList.contains(ticket1));
+    assertTrue(ticketList.contains(ticket2));
+    assertFalse(ticketList.contains(ticket3));
     assertEquals(2, ticketList.size());
   }
 }
