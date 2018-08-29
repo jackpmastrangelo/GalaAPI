@@ -75,8 +75,8 @@ public class EventController {
    */
   @GetMapping("/{eventId}")
   @ApiResponses(value = {
-          @ApiResponse(code=HttpStatus.SC_OK, message = "Event found successfully."),
-          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message = "Event not found.")
+          @ApiResponse(code=HttpStatus.SC_OK, message="Event found successfully."),
+          @ApiResponse(code=HttpStatus.SC_NOT_FOUND, message="Event not found.")
   })
   public Event retrieveEventById(@PathVariable("eventId") String eventId, HttpServletResponse response) {
     Optional<Event> maybeEvent = eventService.findEvent(eventId);

@@ -19,99 +19,124 @@ import java.util.List;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EventControllerTest {
 
+  private static final String EVENT_ID = "acadia_event";
+  private static final String EVENT_NAME = "ACADIA";
+  private static final String EVENT_PLACE = "Acadia";
+  private static final Date EVENT_START_DATE = new Date();
+  private static final Date EVENT_END_DATE = new Date();
+  private static final int EVENT_CAPACITY = 10;
+  private static final String EVENT_DESCRIPTION = "description";
+
   @Test
   public void testRetrieveUserEvents() {
     EventController eventController = new EventController();
+
+    Account account = buildAccount();
+    injectTestingAuthToken(account);
+
     EventService eventService = mock(EventService.class);
-
-    List<GrantedAuthority> ROLES_FOR_ALL_USERS = AuthorityUtils.createAuthorityList("USER");
-    Account account = new Account();
-    account.setId("A1");
-    account.setEmail("E");
-    account.setPassword("P");
-    AccountUserDetails accountUserDetails = new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
-
-    Event event = new Event();
-    Event event1 = new Event();
-
-    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
-    SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
-
-    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-
-    when(eventService.retrieveEventsByAccount(account)).thenReturn(Arrays.asList(event, event1));
+    when(eventService.retrieveEventsByAccount(account)).thenReturn(Arrays.asList(new Event(), new Event()));
     eventController.setEventService(eventService);
 
-
-    List<Event> eventList1 = eventController.retrieveUserEvents();
-
-    assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
-    assertEquals(2, eventList1.size());
+    List<Event> actualEvents = eventController.retrieveUserEvents();
+    assertEquals(2, actualEvents.size());
   }
 
   @Test
   public void testCreateEvent() {
     EventController eventController = new EventController();
+
+    Account account = buildAccount();
+    injectTestingAuthToken(account);
+
+    Event expectedEvent = buildEvent();
     EventService eventService = mock(EventService.class);
-
-    List<GrantedAuthority> ROLES_FOR_ALL_USERS = AuthorityUtils.createAuthorityList("USER");
-    Account account = new Account();
-    account.setId("A1");
-    account.setEmail("E");
-    account.setPassword("P");
-    AccountUserDetails accountUserDetails = new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
-
-    Event event = new Event();
-    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-    Date date = new Date();
-
-    TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountUserDetails, null);
-    SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
-
-    when(eventService.createEvent(account, "ACADIA", "Acadia", date, date,16, "DESC"))
-            .thenReturn(event);
-
+    when(eventService.createEvent(account, EVENT_NAME, EVENT_PLACE, EVENT_START_DATE,
+            EVENT_END_DATE, EVENT_CAPACITY, EVENT_DESCRIPTION)).thenReturn(expectedEvent);
     eventController.setEventService(eventService);
 
-    CreateNewUserEventBody createNewUserEventBody = new CreateNewUserEventBody();
-    createNewUserEventBody.setName("ACADIA");
-    createNewUserEventBody.setPlace("Acadia");
-    createNewUserEventBody.setStartTime(date);
-    createNewUserEventBody.setEndTime(date);
-    createNewUserEventBody.setCapacity(16);
-    createNewUserEventBody.setDescription("DESC");
+    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
+    Event actualEvent = eventController.createNewUserEvent(buildNewEventBody(), httpServletResponse);
 
-    Event result = eventController.createNewUserEvent(createNewUserEventBody, httpServletResponse);
-
-    assertEquals(event, result);
+    assertEquals(expectedEvent, actualEvent);
     assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
   }
 
   @Test
-  public void testRetrieveEventById() {
+  public void testRetrieveEventById_EventExists() {
     EventController eventController = new EventController();
+
+    Event expectedEvent = buildEvent();
     EventService eventService = mock(EventService.class);
-
-    Event event = new Event();
-    HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-    HttpServletResponse httpServletResponse1 = new MockHttpServletResponse();
-
-    when(eventService.findEvent("ID")).thenReturn(Optional.of(event));
-    when(eventService.findEvent("ID1")).thenReturn(Optional.empty());
-
+    when(eventService.findEvent(EVENT_ID)).thenReturn(Optional.of(expectedEvent));
     eventController.setEventService(eventService);
 
-    Event result = eventController.retrieveEventById("ID", httpServletResponse);
-    Event result1 = eventController.retrieveEventById("ID1", httpServletResponse1);
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    Event actualEvent = eventController.retrieveEventById(EVENT_ID, mockResponse);
 
-    assertEquals(event, result);
-    assertEquals(HttpServletResponse.SC_OK, httpServletResponse.getStatus());
-    assertEquals(null, result1);
-    assertEquals(HttpServletResponse.SC_NOT_FOUND, httpServletResponse1.getStatus());
+    assertEquals(expectedEvent, actualEvent);
+    assertEquals(HttpServletResponse.SC_OK, mockResponse.getStatus());
+  }
+
+  @Test
+  public void testRetrieveEventById_EventDoesNotExist() {
+    EventController eventController = new EventController();
+
+    String fakeEventId = "no_event_for_this_id";
+    EventService mockEventService = mock(EventService.class);
+    when(mockEventService.findEvent(fakeEventId)).thenReturn(Optional.empty());
+    eventController.setEventService(mockEventService);
+
+    HttpServletResponse mockResponse = new MockHttpServletResponse();
+    Event actualEvent = eventController.retrieveEventById(fakeEventId, mockResponse);
+
+    assertNull(actualEvent);
+    assertEquals(HttpServletResponse.SC_NOT_FOUND, mockResponse.getStatus());
+  }
+
+  private Account buildAccount() {
+    Account account = new Account();
+    account.setId("A1");
+    account.setEmail("E");
+    account.setPassword("P");
+
+    return account;
+  }
+
+  private void injectTestingAuthToken(Account account) {
+    AccountUserDetails accountUserDetails = new AccountUserDetails(account, null);
+
+    TestingAuthenticationToken token = new TestingAuthenticationToken(accountUserDetails, null);
+    SecurityContextHolder.getContext().setAuthentication(token);
+  }
+
+  private CreateNewUserEventBody buildNewEventBody() {
+    CreateNewUserEventBody createNewUserEventBody = new CreateNewUserEventBody();
+    createNewUserEventBody.setName(EVENT_NAME);
+    createNewUserEventBody.setPlace(EVENT_PLACE);
+    createNewUserEventBody.setStartTime(EVENT_START_DATE);
+    createNewUserEventBody.setEndTime(EVENT_END_DATE);
+    createNewUserEventBody.setCapacity(EVENT_CAPACITY);
+    createNewUserEventBody.setDescription(EVENT_DESCRIPTION);
+
+    return createNewUserEventBody;
+  }
+
+  private Event buildEvent() {
+    Event event = new Event();
+    event.setName(EVENT_NAME);
+    event.setPlace(EVENT_PLACE);
+    event.setStartTime(EVENT_START_DATE);
+    event.setEndTime(EVENT_END_DATE);
+    event.setCapacity(EVENT_CAPACITY);
+    event.setDescription(EVENT_DESCRIPTION);
+
+    return event;
   }
 }
