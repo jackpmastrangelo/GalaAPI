@@ -28,10 +28,12 @@ public class EventControllerTest {
   private static final String EVENT_ID = "acadia_event";
   private static final String EVENT_NAME = "ACADIA";
   private static final String EVENT_PLACE = "Acadia";
-  private static final Date EVENT_START_DATE = new Date();
-  private static final Date EVENT_END_DATE = new Date();
+  private static final Date EVENT_START_DATE = new Date(1000000);
+  private static final Date EVENT_END_DATE = new Date(2000000);
   private static final int EVENT_CAPACITY = 10;
   private static final String EVENT_DESCRIPTION = "description";
+
+  private static final List<GrantedAuthority> ROLES_FOR_ALL_USERS = AuthorityUtils.createAuthorityList("USER");
 
   @Test
   public void testRetrieveUserEvents() {
@@ -110,7 +112,7 @@ public class EventControllerTest {
   }
 
   private void injectTestingAuthToken(Account account) {
-    AccountUserDetails accountUserDetails = new AccountUserDetails(account, null);
+    AccountUserDetails accountUserDetails = new AccountUserDetails(account, ROLES_FOR_ALL_USERS);
 
     TestingAuthenticationToken token = new TestingAuthenticationToken(accountUserDetails, null);
     SecurityContextHolder.getContext().setAuthentication(token);
