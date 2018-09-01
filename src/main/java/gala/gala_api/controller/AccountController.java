@@ -49,7 +49,7 @@ public class AccountController {
     if (accountService.isValidAccount(body.getEmail(), body.getPassword())) {
       return jwtTokenProvider.createToken(body.getEmail());
     } else {
-      GalaApiSpec.sendError(response, HttpStatus.FORBIDDEN.value(), "Account credentials were invalid.");
+      GalaApiSpec.sendError(response, HttpServletResponse.SC_BAD_REQUEST, "Account credentials were invalid.");
     }
 
     return null;
